@@ -4,20 +4,19 @@ import java.awt.Image;
 
 
 public class Case {
-	public static final int NB_COUCHES = 5;
-
-	private final Image couches[] = new Image[NB_COUCHES];
+	private final Image couches[];
 	private boolean libre = true;
 	
-	public Case() {
-		for (int i = 0; i < NB_COUCHES; i++) couches[i] = null;
+	public Case(int nbCouches) {
+		couches = new Image[nbCouches];
+		for (int i = 0; i < nbCouches; i++) couches[i] = null;
 	}
 	
 	public void setCouche(int couche, Image image) {
 		couches[couche] = image;
 	}
 	
-	public boolean isLibre() {
+	public boolean estLibre() {
 		return libre;
 	}
 	
@@ -25,8 +24,7 @@ public class Case {
 		this.libre = libre;
 	}
 	
-	public void dessiner(Graphics g, int x, int y) {
-		for (int i = 0; i < NB_COUCHES; i++)
-			if (couches[i] != null) g.drawImage(couches[i], x, y, null);
+	public void dessinerCouche(int couche, Graphics g, int x, int y) {
+		if (couches[couche] != null) g.drawImage(couches[couche], x, y, null);
 	}
 }

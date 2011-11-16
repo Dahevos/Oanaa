@@ -18,7 +18,7 @@ public class Fenetre extends JFrame {
 		Apparence apparence = Ressources.getApparence("charset.png");
 		Personnage perso = new Personnage(apparence, carte, 3, 17);
 		
-		Ecran ecran = new Ecran(perso, 20);
+		Ecran ecran = new Ecran(perso, 50);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(ecran);
