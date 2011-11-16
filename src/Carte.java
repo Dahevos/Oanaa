@@ -17,12 +17,12 @@ public class Carte {
 
 		for (int i = 0; i < largeur; i++) for (int j = 0; j < hauteur; j++) {
 			cases[i][j] = new Case();
-			cases[i][j].setNiveau(0, fond);
+			cases[i][j].setCouche(0, fond);
 		}
 	}
 	
-	public void setNiveau(int i, int j, int niveau, Image image) {
-		cases[i][j].setNiveau(niveau, image);
+	public void setCouche(int i, int j, int couche, Image image) {
+		cases[i][j].setCouche(couche, image);
 	}
 	
 	public boolean isLibre(int i, int j) {

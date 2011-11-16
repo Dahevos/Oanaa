@@ -13,7 +13,7 @@ public class Ecran extends JPanel {
 		this(joueur, 20);
 	}
 	
-	public Ecran(Personnage joueur, long temps) {
+	public Ecran(Personnage joueur, int fps) {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -23,7 +23,7 @@ public class Ecran extends JPanel {
 		redimensionner();
 		this.joueur = joueur;
 		addKeyListener(joueur);
-		new Thread(new Rafraichissement(temps)).start();
+		new Thread(new Rafraichissement(1000L / fps)).start();
 		setFocusable(true);
 	}
 	
