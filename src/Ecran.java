@@ -23,9 +23,11 @@ public class Ecran extends JPanel {
 		if (carte == null) return;
 		final int largeur = getWidth();
 		final int hauteur = getHeight();
-		final int xBase = joueur.getX() - largeur / 2 + 16;
-		final int yBase = joueur.getY() - hauteur / 2 + 24;
-		carte.dessiner(g, xBase, yBase, largeur, hauteur);
+		synchronized (joueur) {
+			final int xBase = joueur.getX() - largeur / 2 + 16;
+			final int yBase = joueur.getY() - hauteur / 2 + 24;
+			carte.dessiner(g, xBase, yBase, largeur, hauteur);
+		}
 	}
 
 	private class Rafraichissement implements Runnable {

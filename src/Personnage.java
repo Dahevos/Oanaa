@@ -112,9 +112,11 @@ public abstract class Personnage {
 		@Override
 		public void run() {
 			for (int i = 1; i <= 4; i++) {
-				x += dx;
-				y += dy;
-				instant = i % 4;
+				synchronized (Personnage.this) {
+					x += dx;
+					y += dy;
+					instant = i % 4;
+				}
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
