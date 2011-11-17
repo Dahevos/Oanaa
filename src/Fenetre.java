@@ -16,9 +16,11 @@ public class Fenetre extends JFrame {
 				carte.setCouche(i, j, 3, theme.getImage(i, j));
 		
 		Apparence apparence = Ressources.getApparence("charset.png");
-		Personnage perso = new Personnage(apparence, carte, 3, 17);
+		Joueur joueur = new Joueur(apparence, carte, 3, 17);
 		
-		Ecran ecran = new Ecran(perso, 50);
+		new PNJ(Ressources.getApparence("charset2.png"), carte, 5, 20, 100, 1000);
+		
+		Ecran ecran = new Ecran(joueur, 50);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(ecran);

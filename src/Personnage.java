@@ -1,9 +1,7 @@
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 
-public class Personnage implements KeyListener {
+public abstract class Personnage {
 	private Apparence apparence;
 	private Carte carte = null;
 	private int i = -1, j = -1;
@@ -67,8 +65,8 @@ public class Personnage implements KeyListener {
 	}
 	
 	public boolean deplacer(Direction dir) {
+		if (deplacement != null || carte == null) return false;
 		this.dir = dir;
-		if (carte == null) return false;
 		
 		// Calcul des nouvelles coordonnées
 		int i = this.i;
@@ -99,24 +97,6 @@ public class Personnage implements KeyListener {
 	public void dessiner(Graphics g, int xBase, int yBase) {
 		g.drawImage(apparence.getImage(dir, instant), x - xBase, y - yBase - 16, null);
 	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (deplacement != null) return;
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_DOWN: deplacer(Direction.BAS); break;
-		case KeyEvent.VK_LEFT: deplacer(Direction.GAUCHE); break;
-		case KeyEvent.VK_RIGHT: deplacer(Direction.DROITE); break;
-		case KeyEvent.VK_UP: deplacer(Direction.HAUT); break;
-		default: break;
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {}
-
-	@Override
-	public void keyTyped(KeyEvent e) {}
 	
 	private class Deplacement implements Runnable {
 		private final int oldI, oldJ;

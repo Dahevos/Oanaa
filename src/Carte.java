@@ -54,6 +54,7 @@ public class Carte {
 	}
 
 	public void dessiner(Graphics g, int xBase, int yBase, int largeur, int hauteur) {
+		// Calcul de la zone à dessiner
 		int iMin = (xBase < 0 ? 0 : xBase) / 32;
 		int iMax = ((xBase + largeur - 1) + 31) / 32;
 		iMax = iMax >= this.largeur ? this.largeur - 1 : iMax;

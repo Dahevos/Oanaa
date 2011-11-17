@@ -3,13 +3,13 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class Ecran extends JPanel {
-	private Personnage joueur;
+	private Joueur joueur;
 	
-	public Ecran(Personnage joueur) {
+	public Ecran(Joueur joueur) {
 		this(joueur, 20);
 	}
 	
-	public Ecran(Personnage joueur, int fps) {
+	public Ecran(Joueur joueur, int fps) {
 		this.joueur = joueur;
 		addKeyListener(joueur);
 		new Thread(new Rafraichissement(1000L / fps)).start();
