@@ -61,8 +61,11 @@ public class Theme {
 		this.largeur = largeur / 32;
 		this.hauteur = hauteur / 32;
 		images = new Image[largeur][hauteur];
-		for (int i = 0; i < this.largeur; i++) for (int j = 0; j < this.hauteur; j++)
+		for (int i = 0; i < this.largeur; i++) for (int j = 0; j < this.hauteur; j++) {
 			images[i][j] = ressource.getSubimage(32 * i, 32 * j, 32, 32);
+			// images[i][j].setData(images[i][j].getData());
+			// images[i][j] = new Container().createImage(new FilteredImageSource(ressource.getSource(), new CropImageFilter(32 * i, 32 * j, 32, 32)));
+		}
 	}
 
 	/**

@@ -6,7 +6,7 @@ public abstract class Personnage {
 	private Carte carte = null;
 	private int i = -1, j = -1;
 	private int x = -1, y = -1;
-	private Direction dir;
+	private Direction dir, dirSuiv;
 	private int instant;
 	private Thread deplacement = null;
 	
@@ -65,7 +65,11 @@ public abstract class Personnage {
 	}
 	
 	public boolean deplacer(Direction dir) {
-		if (deplacement != null || carte == null) return false;
+		if (carte == null) return false;
+		if (deplacement != null) {
+			dirSuiv = dir;
+			return false;
+		}
 		this.dir = dir;
 		
 		// Calcul des nouvelles coordonnées
@@ -123,6 +127,9 @@ public abstract class Personnage {
 			}
 			carte.setLibre(oldI, oldJ, true);
 			deplacement = null;
+			Direction dir = dirSuiv;
+			dirSuiv = null;
+			if (dir != null) deplacer(dir);
 		}
 	}
 }

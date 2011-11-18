@@ -108,4 +108,9 @@ public class Ressources {
 		}
 		return apparence;
 	}
+	
+	public static void nettoyerThemes() {
+		themes.clear();
+		System.gc();
+	}
 }
