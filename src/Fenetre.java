@@ -15,7 +15,6 @@ public class Fenetre extends JFrame {
 			for (int k = 0; k < 20; k++)
 				for (int i = 0; i < theme.getLargeur(); i++)
 					carte.getCase(i + k * theme.getLargeur(), j).setCouche(3, theme.getImage(i, j));
-		theme = null;
 		
 		Apparence apparence = Ressources.getApparence("charset.png");
 		Joueur joueur = new Joueur(apparence, carte, 10, 17);
@@ -29,7 +28,14 @@ public class Fenetre extends JFrame {
 		setContentPane(ecran);
 		setSize(400, 400);
 		
+		theme.nettoyer();
+		
+		/*
+		 Cette optimisation semble augmenter la mémoire utilisée :-(
+		theme = null;
+		carte = null;
 		Ressources.nettoyerThemes();
+		*/
 		setVisible(true);
 	}
 
