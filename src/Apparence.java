@@ -1,4 +1,3 @@
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class Apparence {
 	 * Ensemble des images :
 	 * <code>images[i][j]</code> = position <code>i</code> dans la direction <code>j</code>
 	 */
-	private final Image[][] images = new Image[4][4];
+	private final BufferedImage[][] images = new BufferedImage[4][4];
 	
 	/**
 	 * Apparence par défaut.
@@ -52,7 +51,7 @@ public class Apparence {
 	 * @param instant instant du déplacement (0 <= <code>instant</code> <= 3)
 	 * @return l'image correspondante
 	 */
-	public Image getImage(Direction dir, int instant) {
+	public BufferedImage getImage(Direction dir, int instant) {
 		int pos;
 		switch (dir) {
 		case BAS: pos = 0; break;

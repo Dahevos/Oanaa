@@ -14,13 +14,14 @@ public class Fenetre extends JFrame {
 		for (int j = 0; j < theme.getHauteur(); j++)
 			for (int k = 0; k < 20; k++)
 				for (int i = 0; i < theme.getLargeur(); i++)
-					carte.setCouche(i + k * theme.getLargeur(), j, 3, theme.getImage(i, j));
+					carte.getCase(i + k * theme.getLargeur(), j).setCouche(3, theme.getImage(i, j));
 		theme = null;
 		
 		Apparence apparence = Ressources.getApparence("charset.png");
-		Joueur joueur = new Joueur(apparence, carte, 3, 17);
+		Joueur joueur = new Joueur(apparence, carte, 10, 17);
 		
-		new PNJ(Ressources.getApparence("charset2.png"), carte, 5, 20, 100, 1000);
+		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
+			new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
 		
 		Ecran ecran = new Ecran(joueur, 25);
 		
