@@ -49,8 +49,8 @@ public class Case {
 		
 		// Dessin des personnages éventuels
 		Personnage perso;
-		for (int i = this.i - 1; i <= this.i + 1; i++)
-			for (int j = this.j - 1; j <= this.j + 2; j++) 
+		for (int j = this.j - 1; j <= this.j + 2; j++)
+			for (int i = this.i - 1; i <= this.i + 1; i++)
 				if (carte.existe(i, j)) {
 					perso = carte.getCase(i, j).getPerso();
 					if (perso != null) perso.dessiner(g, x, y, 32 * this.i, 32 * this.j);

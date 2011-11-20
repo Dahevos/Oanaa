@@ -14,15 +14,15 @@ public class Fenetre extends JFrame {
 		for (int j = 0; j < theme.getHauteur(); j++)
 			for (int k = 0; k < 20; k++)
 				for (int i = 0; i < theme.getLargeur(); i++)
-					carte.getCase(i + k * theme.getLargeur(), j).setCouche(3, theme.getImage(i, j));
+					carte.getCase(i + k * theme.getLargeur(), j).setCouche(1, theme.getImage(i, j));
 		
 		Apparence apparence = Ressources.getApparence("charset.png");
 		Joueur joueur = new Joueur(apparence, carte, 10, 17);
 		
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
 			new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
-		
-		Ecran ecran = new Ecran(joueur, 25);
+				
+		Ecran ecran = new Ecran(joueur);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(ecran);
@@ -31,7 +31,7 @@ public class Fenetre extends JFrame {
 		theme.nettoyer();
 		
 		/*
-		 Cette optimisation semble augmenter la mémoire utilisée :-(
+		 Cette optimisation semble augmenter la mÃ©moire utilisÃ©e :-(
 		theme = null;
 		carte = null;
 		Ressources.nettoyerThemes();
