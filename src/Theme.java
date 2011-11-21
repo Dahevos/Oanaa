@@ -2,7 +2,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.InputMismatchException;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -22,12 +22,10 @@ public class Theme {
 	 */
 	private final int hauteur;
 	
-	/**
-	 * Images des cases composant ce thème
-	 */
-	private final Image images[][];
-
-	private Boolean charge[][];
+	private final File fichier;
+	private BufferedImage theme;
+	private final HashMap<Integer, Image> images = new HashMap<Integer, Image>();
+	
 	/**
 	 * Thème vide (aucune case)
 	 */
@@ -37,40 +35,30 @@ public class Theme {
 	 * Constructeur par défaut (utilisé uniquement pour <code>THEME_VIDE</code>).
 	 */
 	private Theme() {
+		fichier = null;
+		theme = null;
 		largeur = 0;
 		hauteur = 0;
-		images = null;
-		charge = null;
 	}
 
 	/**
 	 * Charge une nouveau thème à partir du fichier <code>fichier</code>.
 	 * @param fichier image contenant les données du thème
-	 * @throws IOException si une erreur de chargement survient
+	 * @throws IOException si le thème ne peut pas être chargé
 	 */
 	public Theme(File fichier) throws IOException {
 		// Lecture de l'image
-		BufferedImage ressource = ImageIO.read(fichier);
-		int largeur = ressource.getWidth();
-		int hauteur = ressource.getHeight();
+		this.fichier = fichier;
+		theme = ImageIO.read(fichier);
+		int largeur = theme.getWidth();
+		int hauteur = theme.getHeight();
 		
 		// Vérification des dimensions
 		if (largeur % 32 != 0 || hauteur % 32 != 0)
-			throw new InputMismatchException("Les dimensions de l'image "
-					+ fichier + " sont incorrectes");
+			throw new IOException("Les dimensions de l'image " + fichier + " sont incorrectes");
 
-		// Découpage de l'image
 		this.largeur = largeur / 32;
-		this.hauteur = hauteur / 32;
-		images = new Image[largeur][hauteur];
-		charge = new Boolean[largeur][hauteur];
-		
-		for (int i = 0; i < this.largeur; i++) for (int j = 0; j < this.hauteur; j++) {
-			images[i][j] = ressource.getSubimage(32 * i, 32 * j, 32, 32);	
-			charge[i][j] = false;
-			// images[i][j].setData(images[i][j].getData());
-			// images[i][j] = new Container().createImage(new FilteredImageSource(ressource.getSource(), new CropImageFilter(32 * i, 32 * j, 32, 32)));
-		}
+		this.hauteur = hauteur / 32;	
 	}
 
 	/**
@@ -94,24 +82,27 @@ public class Theme {
 	 * @param i numéro de la ligne
 	 * @param j numéro de la colonne
 	 * @return l'image de la case spécifiée
+	 * @throws IOException si l'image ne peut pas être chargée
 	 */
-	public Image getImage(int i, int j) {
-		charge[i][j] = true;
-		return images[i][j];
+	public Image getImage(int i, int j) throws IOException {
+		if (i >= largeur || j >= hauteur) throw new IOException(
+				"Il n'y a pas de case (" + i + ", " + j +") dans le thème " + fichier);
+		
+		final int cle = i + largeur * j;
+		Image res = images.get(cle);
+		if (res == null) {
+			if (theme == null) theme = ImageIO.read(fichier);
+			BufferedImage image = theme.getSubimage(32 * i, 32 * j, 32, 32);
+			res = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+			res.getGraphics().drawImage(image, 0, 0, null);
+			images.put(cle, res);
+		}
+		
+		return res;
 	}
-	
-	
 	
 	public void nettoyer() {
-	
-		for (int i = 0; i < this.largeur; i++) for (int j = 0; j < this.hauteur; j++) {
-			
-			if (!charge[i][j])
-				images[i][j] = null;
-		}	
-		charge = null;
-		
+		theme = null;
 		System.gc();
 	}
-
 }

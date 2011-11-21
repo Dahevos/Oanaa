@@ -14,12 +14,12 @@ public class Ressources {
 	 * Emplacement du répertoire contenant les ressources.
 	 */
 	private static String emplacement = "ressources";
-	
+
 	/**
 	 * Sous-répertoire contenant les thèmes.
 	 */
 	private static final String REP_THEMES = "themes";
-	
+
 	/**
 	 * Sous-répertoire contenant les apparences.
 	 */
@@ -29,7 +29,7 @@ public class Ressources {
 	 * Ensemble des thèmes déjà chargés.
 	 */
 	private static final HashMap<String, Theme> themes = new HashMap<String, Theme>();
-	
+
 	/**
 	 * Ensemble des apparences déjà chargées.
 	 */
@@ -39,7 +39,7 @@ public class Ressources {
 	 * Constructeur par défaut (privé pour empêcher toute instanciation).
 	 */
 	private Ressources() {}
-	
+
 	/**
 	 * Retourne l'emplacement du répertoire contenant les ressources.
 	 * @return l'emplacement du répertoire contenant les ressources
@@ -47,7 +47,7 @@ public class Ressources {
 	public static String getEmplacement() {
 		return emplacement;
 	}
-	
+
 	/**
 	 * Modifie l'emplacement du répertoire contenant les ressources.
 	 * @param emplacement nouvel emplacement du répertoire contenant les ressources
@@ -55,7 +55,7 @@ public class Ressources {
 	public static void setEmplacement(String emplacement) {
 		Ressources.emplacement = emplacement;
 	}
-	
+
 	/**
 	 * Retourne le thème nommé <code>nom</code>, ou <code>Theme.THEME_VIDE</code>
 	 * s'il n'est pas disponible.
@@ -75,7 +75,7 @@ public class Ressources {
 		}
 		return theme;
 	}
-	
+
 	/**
 	 * Retourne l'image (<code>i</code>, <code>j</code>) du thème nommé <code>nom</code>, ou
 	 * <code>null</code> si elle n'est pas disponible.
@@ -85,10 +85,14 @@ public class Ressources {
 	 * @return l'image spécifiée
 	 */
 	public static Image getImage(String nomTheme, int i, int j) {
-		Theme theme = getTheme(nomTheme);
-		return i < theme.getLargeur() && j < theme.getHauteur() ? theme.getImage(i, j) : null;
+		try {
+			return getTheme(nomTheme).getImage(i, j);
+		} catch (IOException e) {
+			System.err.println(e);
+			return null;
+		}
 	}
-	
+
 	/**
 	 * Retourne l'apparence nommée <code>nom</code>, ou <code>Apparence.APPARENCE_DEFAUT</code>
 	 * si elle n'est pas disponible.
@@ -108,9 +112,20 @@ public class Ressources {
 		}
 		return apparence;
 	}
-	
+
 	public static void nettoyerThemes() {
+		for (Theme theme : themes.values()) {
+			theme.nettoyer();
+		}
+	}
+	
+	public static void supprimerThemes() {
 		themes.clear();
+		System.gc();
+	}
+	
+	public static void supprimerApparences() {
+		apparences.clear();
 		System.gc();
 	}
 }
