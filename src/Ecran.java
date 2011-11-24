@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
@@ -12,6 +11,7 @@ public class Ecran extends JPanel implements EcouteurPerso {
 	private Carte carte;
 	private int xBase, yBase;
 	private BufferedImage image;
+	private Graphics g;
 
 	public Ecran(Joueur joueur) {
 		this.joueur = joueur;
@@ -37,10 +37,11 @@ public class Ecran extends JPanel implements EcouteurPerso {
 		yBase = joueur.getY() - hauteur / 2 + 24;
 		if (largeur > 0 && hauteur > 0) {
 			image = new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_ARGB);
-			carte.dessiner(image.getGraphics(), xBase, yBase,
-					new Rectangle(xBase, yBase, largeur, hauteur));
+			g = image.createGraphics();
+			carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, hauteur);
 			repaint();
 		} else {
+			g = null;
 			image = null;
 		}
 	}
@@ -60,8 +61,7 @@ public class Ecran extends JPanel implements EcouteurPerso {
 		final int hauteur = yMax - yMin;
 		if (largeur <= 0 || hauteur <= 0) return;
 		
-		carte.dessiner(image.getGraphics(), xBase, yBase,
-				new Rectangle(xMin, yMin, largeur, hauteur));
+		carte.dessiner(g, xBase, yBase, xMin, yMin, largeur, hauteur);
 		repaint(xMin - xBase, yMin - yBase, largeur, hauteur);
 	}
 	
@@ -74,8 +74,7 @@ public class Ecran extends JPanel implements EcouteurPerso {
 	@Override
 	public void carteChangee(Carte carte) {
 		this.carte = carte;
-		carte.dessiner(image.getGraphics(), xBase, yBase, 
-				new Rectangle(xBase, yBase, getWidth(), getHeight()));
+		carte.dessiner(g, xBase, yBase, xBase, yBase, getWidth(), getHeight());
 		repaint();
 	}
 
@@ -88,36 +87,27 @@ public class Ecran extends JPanel implements EcouteurPerso {
 		yBase = joueur.getY() - hauteur / 2 + 24;
 		
 		if (image == null) return;
-		final Graphics g = image.getGraphics();
 		
 		switch (dir) {
 		case BAS:
 			g.copyArea(0, 8, largeur, hauteur - 8, 0, -8);
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(xBase, yBase + hauteur - 8, largeur, 8));
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(joueur.getX(), joueur.getY() - 8, 32, 56));
+			carte.dessiner(g, xBase, yBase, xBase, yBase + hauteur - 8, largeur, 8);
+			carte.dessiner(g, xBase, yBase, joueur.getX(), joueur.getY() - 8, 32, 56);
 			break;
 		case GAUCHE:
 			g.copyArea(0, 0, largeur - 8, hauteur, 8, 0);
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(xBase, yBase, 8, hauteur));
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(joueur.getX(), joueur.getY(), 40, 48));
+			carte.dessiner(g, xBase, yBase, xBase, yBase, 8, hauteur);
+			carte.dessiner(g, xBase, yBase, joueur.getX(), joueur.getY(), 40, 48);
 			break;
 		case DROITE:
 			g.copyArea(8, 0, largeur - 8, hauteur, -8, 0);
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(xBase + largeur - 8, yBase, 8, hauteur));
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(joueur.getX() - 8, joueur.getY(), 40, 48));
+			carte.dessiner(g, xBase, yBase, xBase + largeur - 8, yBase, 8, hauteur);
+			carte.dessiner(g, xBase, yBase, joueur.getX() - 8, joueur.getY(), 40, 48);
 			break;
 		case HAUT:
 			g.copyArea(0, 0, largeur, hauteur - 8, 0, 8);
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(xBase, yBase, largeur, 8));
-			carte.dessiner(g, xBase, yBase,
-					new Rectangle(joueur.getX(), joueur.getY(), 32, 56));
+			carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, 8);
+			carte.dessiner(g, xBase, yBase, joueur.getX(), joueur.getY(), 32, 56);
 			break;
 		}
 		repaint();

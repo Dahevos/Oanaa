@@ -1,16 +1,19 @@
 import java.awt.Graphics;
-import java.awt.Image;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 
-
-
-public class Case {
+public class Case implements Serializable {
+	private static final long serialVersionUID = 42L;
+	
 	private final Carte carte;
 	private final int i, j;
 	
 	private final int couchesInf, nbCouches;
-	private final Image couches[];
-	private Personnage perso = null;
-	private boolean libre = true;
+	private final Element couches[];
+	private boolean bloquee = false;
+	private transient Personnage perso = null;
+	private transient boolean libre = ! bloquee;
 	
 	public Case(Carte carte, int i, int j, int couchesInf, int couchesSup) {
 		this.carte = carte;
@@ -18,12 +21,12 @@ public class Case {
 		this.j = j;
 		this.couchesInf = couchesInf;
 		nbCouches = couchesInf + couchesSup;
-		couches = new Image[nbCouches];
+		couches = new Element[nbCouches];
 		for (int k = 0; k < nbCouches; k++) couches[k] = null;
 	}
 	
-	public void setCouche(int couche, Image image) {
-		couches[couche] = image;
+	public void setCouche(int couche, Element element) {
+		couches[couche] = element;
 	}
 	
 	public Personnage getPerso() {
@@ -32,6 +35,14 @@ public class Case {
 	
 	public void setPerso(Personnage perso) {
 		this.perso = perso;
+	}
+	
+	public boolean estBloquee() {
+		return bloquee;
+	}
+
+	public void setBloquee(boolean bloquee) {
+		this.bloquee = bloquee;
 	}
 	
 	public boolean estLibre() {
@@ -45,7 +56,7 @@ public class Case {
 	public void dessiner(Graphics g, int x, int y) {
 		// Dessin des couches inférieures
 		for (int couche = 0; couche < couchesInf; couche++)
-			if (couches[couche] != null) g.drawImage(couches[couche], x, y, null);
+			if (couches[couche] != null) g.drawImage(couches[couche].getImage(), x, y, null);
 		
 		// Dessin des personnages éventuels
 		Personnage perso;
@@ -58,6 +69,11 @@ public class Case {
 		
 		// Dessin des couches supérieures
 		for (int couche = couchesInf; couche < nbCouches; couche++)
-			if (couches[couche] != null) g.drawImage(couches[couche], x, y, null);
+			if (couches[couche] != null) g.drawImage(couches[couche].getImage(), x, y, null);
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		libre = ! bloquee;
 	}
 }

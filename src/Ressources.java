@@ -1,4 +1,3 @@
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -66,7 +65,7 @@ public class Ressources {
 		Theme theme = themes.get(nom);
 		if (theme == null) {
 			try {
-				theme = new Theme(new File(emplacement + "/" + REP_THEMES + "/" + nom));
+				theme = new Theme(nom, new File(emplacement + "/" + REP_THEMES + "/" + nom));
 			} catch (IOException e) {
 				System.err.println("Impossible de charger le thème " + nom);
 				theme = Theme.THEME_VIDE;
@@ -77,16 +76,16 @@ public class Ressources {
 	}
 
 	/**
-	 * Retourne l'image (<code>i</code>, <code>j</code>) du thème nommé <code>nom</code>, ou
+	 * Retourne l'élément (<code>i</code>, <code>j</code>) du thème nommé <code>nom</code>, ou
 	 * <code>null</code> si elle n'est pas disponible.
 	 * @param nomTheme nom du thème
 	 * @param i numéro de la ligne
 	 * @param j numéro de la colonne
-	 * @return l'image spécifiée
+	 * @return l'élément spécifié
 	 */
-	public static Image getImage(String nomTheme, int i, int j) {
+	public static Element getElement(String nomTheme, int i, int j) {
 		try {
-			return getTheme(nomTheme).getImage(i, j);
+			return getTheme(nomTheme).getElement(i, j);
 		} catch (IOException e) {
 			System.err.println(e);
 			return null;
@@ -121,11 +120,9 @@ public class Ressources {
 	
 	public static void supprimerThemes() {
 		themes.clear();
-		System.gc();
 	}
 	
 	public static void supprimerApparences() {
 		apparences.clear();
-		System.gc();
 	}
 }
