@@ -18,6 +18,17 @@ public class Ecran extends JPanel implements EcouteurPerso {
 		joueur.ajouterEcouteur(this);
 		carte = joueur.getCarte();
 		carte.setEcran(this);
+		init();
+	}
+	
+	public Ecran(Carte carte) {
+		joueur = null;
+		this.carte = carte;
+		carte.setEcran(this);
+		init();
+	}
+	
+	private void init() {
 		redimensionner();
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -29,12 +40,44 @@ public class Ecran extends JPanel implements EcouteurPerso {
 		addKeyListener(joueur);
 		setFocusable(true);
 	}
+	
+	public void setJoueur(Joueur joueur) {
+		if (joueur == this.joueur) return;
+		if (this.joueur != null) this.joueur.supprimerEcouteur(this);
+		this.joueur = joueur;
+		carte = joueur.getCarte();
+		if (carte != null) carte.setEcran(this);
+		redimensionner();
+	}
+	
+	public Joueur getJoueur() {
+		return joueur;
+	}
+	
+	public void setCarte(Carte carte) {
+		if (joueur != null) joueur.supprimerEcouteur(this);
+		if (carte == this.carte) return;
+		this.carte.setEcran(null);
+		this.carte = carte;
+		carte.setEcran(this);
+		redimensionner();
+	}
+	
+	public Carte getCarte() {
+		return carte;
+	}
 
 	synchronized private void redimensionner() {
 		final int largeur = getWidth();
 		final int hauteur = getHeight();
-		xBase = joueur.getX() - largeur / 2 + 16;
-		yBase = joueur.getY() - hauteur / 2 + 24;
+		if (joueur == null) {
+			xBase = 0;
+			yBase = 0;
+		} else {
+			xBase = joueur.getX() - largeur / 2 + 16;
+			yBase = joueur.getY() - hauteur / 2 + 24;
+		}
+		
 		if (largeur > 0 && hauteur > 0) {
 			image = new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_ARGB);
 			g = image.createGraphics();

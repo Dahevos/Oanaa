@@ -46,6 +46,14 @@ public class Carte implements Serializable {
 	public boolean existe(int i, int j) {
 		return i >= 0 && j >= 0 && i < largeur && j < hauteur;
 	}
+	
+	public int getLargeur() {
+		return largeur;
+	}
+	
+	public int getHauteur() {
+		return hauteur;
+	}
 
 	public Case getCase(int i, int j) {
 		return cases[i][j];

@@ -25,6 +25,10 @@ public abstract class Personnage {
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.add(ecouteur);
 	}
+	
+	public void supprimerEcouteur(EcouteurPerso ecouteur) {
+		ecouteurs.remove(ecouteur);
+	}
 
 	public Carte getCarte() {
 		return carte;

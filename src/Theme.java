@@ -64,7 +64,7 @@ public class Theme {
 	}
 
 	/**
-	 * Retourne la largeur de ce thème (nombre de cases horizontales)
+	 * Retourne la largeur de ce thème (nombre de cases horizontales).
 	 * @return la largeur de ce thème
 	 */
 	public int getLargeur() {
@@ -72,11 +72,21 @@ public class Theme {
 	}
 	
 	/**
-	 * Retourne la hauteur de ce thème (nombre de cases verticales)
+	 * Retourne la hauteur de ce thème (nombre de cases verticales).
 	 * @return la hauteur de ce thème
 	 */
 	public int getHauteur() {
 		return hauteur;
+	}
+	
+	/**
+	 * Retourne l'image complète de ce thème.
+	 * @return l'image complète de ce thème
+	 * @throws IOException si le thème ne peut pas être chargé
+	 */
+	public BufferedImage getImage() throws IOException {
+		if (theme == null) theme = ImageIO.read(fichier);
+		return theme;
 	}
 	
 	/**
