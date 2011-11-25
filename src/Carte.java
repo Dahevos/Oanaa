@@ -52,7 +52,8 @@ public class Carte implements Serializable {
 	}
 
 	public void rafraichir(int iMin, int jMin, int iMax, int jMax) {
-		ecran.rafraichirCarte(32 * iMin, 32 * jMin, 32 * iMax + 31, 32 * jMax + 31);
+		if (ecran != null)
+			ecran.rafraichirCarte(32 * iMin, 32 * jMin, 32 * iMax + 31, 32 * jMax + 31);
 	}
 
 	public void dessiner(Graphics g, int xBase, int yBase,

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 
 public abstract class Personnage {
-	private Apparence apparence;
+	private final Apparence apparence;
 	private Carte carte = null;
 	private int i = -1, j = -1;
 	private int x = -1, y = -1;
 	private Direction dir, dirSuiv;
 	private int instant;
 	private Thread deplacement = null;
-	private ArrayList<EcouteurPerso> ecouteurs = new ArrayList<EcouteurPerso>();
+	private final ArrayList<EcouteurPerso> ecouteurs = new ArrayList<EcouteurPerso>();
 
 	public Personnage(Apparence apparence) {
 		this.apparence = apparence;
@@ -21,7 +21,7 @@ public abstract class Personnage {
 		this(apparence);
 		setCarte(carte, i, j);
 	}
-	
+
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.add(ecouteur);
 	}
@@ -47,16 +47,17 @@ public abstract class Personnage {
 	}
 
 	public boolean setCarte(Carte carte, int i, int j) {
-		// Vérification de la disponibilité
-		if (carte == null || ! carte.existe(i, j) || ! carte.getCase(i, j).estLibre()) return false;
+		// Vérification de la validité
+		if (carte == null || ! carte.existe(i, j)) return false;
 
 		// Réservation de la destination
-		carte.getCase(i, j).setLibre(false);
+		if (! carte.getCase(i, j).allouer()) return false;
 
 		// Suppression (éventuelle) de l'ancienne position
 		if (this.carte != null) {
-			this.carte.getCase(i, j).setLibre(true);
-			carte.getCase(i, j).setPerso(null);
+			Case c = this.carte.getCase(this.i, this.j);
+			c.setPerso(null);
+			c.liberer();
 		}
 
 		// Mise en place de la nouvelle position
@@ -76,11 +77,12 @@ public abstract class Personnage {
 
 	public boolean deplacer(Direction dir) {
 		if (carte == null) return false;
+
+		// Mise à jour de la direction
 		if (deplacement != null) {
 			dirSuiv = dir;
 			return false;
 		}
-		this.dir = dir;
 
 		// Calcul des nouvelles coordonnées
 		int i = this.i;
@@ -92,12 +94,15 @@ public abstract class Personnage {
 		case HAUT: j--; break;
 		}
 
-		// Vérification de la disponibilité
-		if (! carte.existe(i, j) || ! carte.getCase(i, j).estLibre()) return false;
+		// Vérification de la validité
+		if (! carte.existe(i, j)) return false;
 
-		// Réservation de la destination
-		carte.getCase(i, j).setLibre(false);
-		deplacement = new Thread(new Deplacement(this.i, this.j, i, j));
+		// Validation du déplacement
+		synchronized (ecouteurs) {
+			if ((deplacement != null) || (! carte.getCase(i, j).allouer())) return false;
+			deplacement = new Thread(new Deplacement(this.i, this.j, i, j));
+		}
+		this.dir = dir;
 
 		// Mise en place de la nouvelle position
 		carte.getCase(this.i, this.j).setPerso(null);
@@ -116,7 +121,7 @@ public abstract class Personnage {
 		final int yMin = yCase > this.y ? yCase : this.y;
 		final int xMax = xCase + 31 < this.x + 31 ? xCase + 31 : this.x + 31;
 		final int yMax = yCase + 31 < this.y + 47 ? yCase + 31 : this.y + 47;
-		
+
 		final int largeur = xMax - xMin + 1;
 		final int hauteur = yMax - yMin + 1;
 		if (largeur > 0 && hauteur > 0)
@@ -138,20 +143,18 @@ public abstract class Personnage {
 		@Override
 		public void run() {
 			for (int k = 1; k <= 4; k++) {
-				synchronized (Personnage.this) {
-					x += dx;
-					y += dy;
-					instant = k % 4;
-					for (EcouteurPerso ecouteur : ecouteurs) {
-						ecouteur.persoBouge(dir);
-					}
-					if (ecouteurs.isEmpty()) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
+				x += dx;
+				y += dy;
+				instant = k % 4;
+				for (EcouteurPerso ecouteur : ecouteurs) {
+					ecouteur.persoBouge(dir);
 				}
+				if (ecouteurs.isEmpty()) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
 			}
-			carte.getCase(oldI, oldJ).setLibre(true);
+			carte.getCase(oldI, oldJ).liberer();
 			deplacement = null;
 			Direction dir = dirSuiv;
 			dirSuiv = null;

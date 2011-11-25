@@ -13,7 +13,7 @@ public class Case implements Serializable {
 	private final Element couches[];
 	private boolean bloquee = false;
 	private transient Personnage perso = null;
-	private transient boolean libre = ! bloquee;
+	private transient boolean libre = true;
 	
 	public Case(Carte carte, int i, int j, int couchesInf, int couchesSup) {
 		this.carte = carte;
@@ -45,12 +45,17 @@ public class Case implements Serializable {
 		this.bloquee = bloquee;
 	}
 	
-	public boolean estLibre() {
-		return libre;
+	public boolean allouer() {
+		if (bloquee) return false;
+		synchronized (this) {
+			if (! libre) return false;
+			libre = false;
+		}
+		return true;
 	}
 	
-	public void setLibre(boolean libre) {
-		this.libre = libre;
+	public void liberer() {
+		libre = true;
 	}
 	
 	public void dessiner(Graphics g, int x, int y) {
@@ -74,6 +79,6 @@ public class Case implements Serializable {
 	
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
-		libre = ! bloquee;
+		libre = true;
 	}
 }
