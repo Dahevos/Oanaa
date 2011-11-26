@@ -1,3 +1,4 @@
+package affichage;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.File;
@@ -7,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import ressources.Element;
 
 public class Carte implements Serializable {
 	private static final long serialVersionUID = 42L;

@@ -1,6 +1,9 @@
+package affichage;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import ressources.Apparence;
 
 
 public abstract class Personnage {

@@ -1,9 +1,13 @@
+package ressources;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.InputMismatchException;
 
 import javax.imageio.ImageIO;
+
+import affichage.Direction;
 
 /**
  * Classe contenant l'apparence d'un personnage (images des différentes positions possibles).

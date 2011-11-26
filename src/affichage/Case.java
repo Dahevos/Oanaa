@@ -1,7 +1,10 @@
+package affichage;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+
+import ressources.Element;
 
 public class Case implements Serializable {
 	private static final long serialVersionUID = 42L;

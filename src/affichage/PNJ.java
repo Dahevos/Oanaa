@@ -1,3 +1,6 @@
+package affichage;
+import ressources.Apparence;
+
 
 public class PNJ extends Personnage {
 	public static final int DUREE_MIN_DEFAUT = 500;

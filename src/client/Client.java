@@ -1,12 +1,21 @@
+package client;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import affichage.Carte;
+import affichage.Ecran;
+import affichage.Joueur;
+import affichage.PNJ;
+
+import ressources.Apparence;
+import ressources.Ressources;
+
 
 @SuppressWarnings("serial")
-public class Fenetre extends JFrame {
-	public Fenetre() throws IOException {
+public class Client extends JFrame {
+	public Client() throws IOException {
 		long debut = System.currentTimeMillis();
 		/*
 		Theme theme = Ressources.getTheme("tileset.png");
@@ -55,6 +64,6 @@ public class Fenetre extends JFrame {
 	}
 
 	public static void main(String[] args) throws IOException {
-		new Fenetre();
+		new Client();
 	}
 }

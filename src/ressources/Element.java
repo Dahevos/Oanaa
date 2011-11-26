@@ -1,3 +1,4 @@
+package ressources;
 import java.awt.image.BufferedImage;
 import java.io.ObjectStreamException;
 import java.io.Serializable;

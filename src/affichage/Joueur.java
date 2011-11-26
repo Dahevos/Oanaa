@@ -1,5 +1,8 @@
+package affichage;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import ressources.Apparence;
 
 
 public class Joueur extends Personnage implements KeyListener {
