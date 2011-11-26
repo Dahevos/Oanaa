@@ -1,20 +1,30 @@
 package client;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import affichage.Carte;
 import affichage.Ecran;
 import affichage.Joueur;
 import affichage.PNJ;
 
-import ressources.Apparence;
 import ressources.Ressources;
-
 
 @SuppressWarnings("serial")
 public class Client extends JFrame {
+
+	private Joueur joueur1, joueur2;
+	private PNJ pnj;
+	private Carte carte;
+	private Ecran ecran;
+
 	public Client() throws IOException {
 		long debut = System.currentTimeMillis();
 		/*
@@ -31,20 +41,90 @@ public class Client extends JFrame {
 		System.out.println("Début écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 		carte.ecrire(new File("carte.dat"));
 		System.out.println("Fin écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		*/
+		/**/
 		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		Carte carte = Carte.lire(new File("carte.dat"));
+		carte = Carte.lire(new File("carte.dat"));
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 		
-		Apparence apparence = Ressources.getApparence("charset.png");
-		Joueur joueur = new Joueur(apparence, carte, 3, 3);
+		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte, 3, 3);
+		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte, 5, 5);
 
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
-			new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
+			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
 		
-		Ecran ecran = new Ecran(joueur);
+		ecran = new Ecran(joueur1);
+		ecran.addKeyListener(joueur1);
 
+		JMenuBar menubar = new JMenuBar();
+		
+		JMenu vue = new JMenu("Vue");
+		menubar.add(vue);
+		vue.add(new JMenuItem(new AbstractAction("Joueur 1") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setPerso(joueur1);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("Joueur 2") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setPerso(joueur2);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("PNJ") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setPerso(pnj);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("Carte") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setCarte(carte);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("Rien") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setCarte(null);
+			}
+		}));
+		
+		JMenu controle = new JMenu("Contrôle");
+		menubar.add(controle);
+		controle.add(new JMenuItem(new AbstractAction("Joueur 1") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.removeKeyListener(joueur1);
+				ecran.removeKeyListener(joueur2);
+				ecran.addKeyListener(joueur1);
+			}
+		}));
+		controle.add(new JMenuItem(new AbstractAction("Joueur 2") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.removeKeyListener(joueur1);
+				ecran.removeKeyListener(joueur2);
+				ecran.addKeyListener(joueur2);
+			}
+		}));
+		
+		JMenu outils = new JMenu("Outils");
+		menubar.add(outils);
+		outils.add(new JMenuItem(new AbstractAction("Exporter") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					carte.exporterImage(new File("carte.png"), "PNG");
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(
+							Client.this, e.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);
+				} 
+			}
+		}));
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setJMenuBar(menubar);
 		setContentPane(ecran);
 		setSize(400, 400);
 		

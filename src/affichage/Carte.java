@@ -1,6 +1,6 @@
 package affichage;
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import javax.imageio.ImageIO;
 
 import ressources.Element;
 
@@ -77,7 +79,6 @@ public class Carte implements Serializable {
 		int jMax = ((yMin + hauteur - 1) + 31) / 32;
 
 		// Affichage des cases
-		g.setColor(Color.BLACK);
 		for (int j = jMin; j <= jMax; j++)
 			for (int i = iMin; i <= iMax; i++)
 				if (i < 0 || j < 0 || i >= this.largeur || j >= this.hauteur)
@@ -110,7 +111,7 @@ public class Carte implements Serializable {
 		try {
 			in = new ObjectInputStream(new FileInputStream(fichier));
 		} catch (IOException e) {
-			System.err.println("Le fichier " + fichier + "ne peut pas être lu.");
+			System.err.println("Le fichier " + fichier + "ne peut pas être lu :\n" + e);
 			return null;
 		}
 
@@ -127,5 +128,12 @@ public class Carte implements Serializable {
 			System.err.println("Le fichier " + fichier + " ne contient pas une carte valide.");
 			return null;
 		}
+	}
+	
+	public void exporterImage(File fichier, String type) throws IOException {
+		BufferedImage image = new BufferedImage(32 * largeur, 32 * hauteur,
+				BufferedImage.TYPE_INT_ARGB);
+		dessiner(image.getGraphics(), 0, 0, 0, 0, 32 * largeur, 32 * hauteur);
+		ImageIO.write(image, type, fichier);
 	}
 }

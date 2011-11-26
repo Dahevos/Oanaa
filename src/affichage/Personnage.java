@@ -15,14 +15,20 @@ public abstract class Personnage {
 	private int instant;
 	private Thread deplacement = null;
 	private final ArrayList<EcouteurPerso> ecouteurs = new ArrayList<EcouteurPerso>();
+	private boolean auto;
 
 	public Personnage(Apparence apparence) {
 		this.apparence = apparence;
 	}
 
-	public Personnage(Apparence apparence, Carte carte, int i, int j) {
+	public Personnage(Apparence apparence, Carte carte, int i, int j, boolean auto) {
 		this(apparence);
 		setCarte(carte, i, j);
+		this.auto = auto;
+	}
+	
+	public Personnage(Apparence apparence, Carte carte, int i, int j) {
+		this(apparence, carte, i, j, true);
 	}
 
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
@@ -51,6 +57,14 @@ public abstract class Personnage {
 
 	public int getY() {
 		return y;
+	}
+	
+	public boolean isAuto() {
+		return auto;
+	}
+	
+	public void setAuto(boolean auto) {
+		this.auto = auto;
 	}
 
 	public boolean setCarte(Carte carte, int i, int j) {
@@ -156,7 +170,7 @@ public abstract class Personnage {
 				for (EcouteurPerso ecouteur : ecouteurs) {
 					ecouteur.persoBouge(dir);
 				}
-				if (ecouteurs.isEmpty()) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
+				if (auto) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
