@@ -2,6 +2,7 @@ package editeur;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyListener;
 import java.io.File;
 
 import javax.swing.JFrame;
@@ -35,8 +36,8 @@ public class Editeur extends JFrame{
 		gauche.getHorizontalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setUnitIncrement(32);
-
-
+		gauche.addMouseListener(planche);
+		
 		/* création de la carte */
 		//Carte edition = new Carte(1500, 1500);
 		Carte edition = Carte.lire(new File("carte.dat"));
