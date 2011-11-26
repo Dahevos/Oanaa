@@ -3,8 +3,7 @@ package editeur;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
@@ -25,6 +24,8 @@ public class PlancheRessource extends JPanel implements MouseListener {
     private Theme theme;
     private int X;
     private int Y;
+    private int largeurSelection;
+    private int hauteurSelection;
     
     public PlancheRessource(String nom) {
     	this.theme = Ressources.getTheme(nom);
@@ -73,13 +74,14 @@ public class PlancheRessource extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
+
 	}
 
 

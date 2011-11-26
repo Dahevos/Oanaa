@@ -105,6 +105,10 @@ public class Carte implements Serializable {
 	public void ecrire(File fichier) {
 		ecrire(this, fichier);
 	}
+	
+	public void ecrire(String nomFichier) {
+		ecrire(new File("nomFichier"));
+	}
 
 	public static Carte lire(File fichier) {
 		ObjectInputStream in;
