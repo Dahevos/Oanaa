@@ -14,6 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.UIManager;
 
 import ressources.Ressources;
 
@@ -32,7 +33,7 @@ public class Editeur extends JFrame{
 
 	public Editeur(){
 
-		/* initialisation et paramÈtrage de la JFrame */
+		/* initialisation et param√©trage de la JFrame */
 		this.setTitle("Editeur de carte");
 		this.setSize(1024, 800);
 		this.setLocationRelativeTo(null);
@@ -47,9 +48,9 @@ public class Editeur extends JFrame{
 		gauche.getHorizontalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setUnitIncrement(32);
-		gauche.addMouseListener(planche);
+		//gauche.addMouseListener(planche);
 
-		/* crÈation de la carte */
+		/* cr√©ation de la carte */
 		edition = new Carte(1500, 1500, Ressources.getElement("tileset.png", 0, 0));
 		//Carte edition = Carte.lire(new File("carte.dat"));
 
@@ -61,10 +62,10 @@ public class Editeur extends JFrame{
 		droite.getVerticalScrollBar().setBlockIncrement(32);
 		droite.getVerticalScrollBar().setUnitIncrement(32);
 
-		/* construction du sÈparateur */
+		/* construction du s√©parateur */
 		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gauche, droite);
 
-		/* On le passe ensuite au contentPane de notre objet Fenetre (placÈ au centre)  */
+		/* On le passe ensuite au contentPane de notre objet Fenetre (plac√© au centre)  */
 		this.getContentPane().add(split, BorderLayout.CENTER);
 
 
@@ -111,15 +112,20 @@ public class Editeur extends JFrame{
 							Editeur.this, e.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);
 				} 			}
 		}));
-		
+
 		setJMenuBar(menubar);
 
-		
+
 	}
 
-public static void main(String[] args){
+	public static void main(String[] args){
+		//* Utilisation du "Look & Feel" du syst√®me (si possible)
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {}
+		//*/
 
-	new Editeur();
-}     
+		new Editeur();
+	}     
 
 }

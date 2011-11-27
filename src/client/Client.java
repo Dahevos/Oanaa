@@ -9,6 +9,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import affichage.Carte;
 import affichage.Ecran;
@@ -45,18 +46,18 @@ public class Client extends JFrame {
 		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 		carte = Carte.lire(new File("carte.dat"));
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		
+
 		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte, 3, 3);
 		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte, 5, 5);
 
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
 			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
-		
+
 		ecran = new Ecran(joueur1);
 		ecran.addKeyListener(joueur1);
 
 		JMenuBar menubar = new JMenuBar();
-		
+
 		JMenu vue = new JMenu("Vue");
 		menubar.add(vue);
 		vue.add(new JMenuItem(new AbstractAction("Joueur 1") {
@@ -89,7 +90,7 @@ public class Client extends JFrame {
 				ecran.setCarte(null);
 			}
 		}));
-		
+
 		JMenu controle = new JMenu("Contrôle");
 		menubar.add(controle);
 		controle.add(new JMenuItem(new AbstractAction("Joueur 1") {
@@ -108,7 +109,7 @@ public class Client extends JFrame {
 				ecran.addKeyListener(joueur2);
 			}
 		}));
-		
+
 		JMenu outils = new JMenu("Outils");
 		menubar.add(outils);
 		outils.add(new JMenuItem(new AbstractAction("Exporter") {
@@ -122,20 +123,20 @@ public class Client extends JFrame {
 				} 
 			}
 		}));
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(menubar);
 		setContentPane(ecran);
 		setSize(400, 400);
-		
+
 		System.out.println("Avant nettoyage : " + getMemoire());
 		Ressources.nettoyerThemes();
 		System.gc();
 		System.out.println("Après nettoyage : " + getMemoire());
-		
+
 		setVisible(true);
 	}
-	
+
 	public static String getMemoire() {
 		final Runtime r = Runtime.getRuntime();
 		final long total = r.totalMemory();
@@ -144,6 +145,12 @@ public class Client extends JFrame {
 	}
 
 	public static void main(String[] args) throws IOException {
+		//* Utilisation du "Look & Feel" du système (si possible)
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {}
+		//*/
+
 		new Client();
 	}
 }

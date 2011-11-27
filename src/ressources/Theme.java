@@ -73,6 +73,14 @@ public class Theme {
 	}
 	
 	/**
+	 * Retourne le nom de ce thème.
+	 * @return le nom de ce thème
+	 */
+	public String getNom() {
+		return nom;
+	}
+	
+	/**
 	 * Retourne la hauteur de ce thème (nombre de cases verticales).
 	 * @return la hauteur de ce thème
 	 */
