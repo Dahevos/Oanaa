@@ -1,5 +1,6 @@
 package affichage;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -84,12 +85,14 @@ public class Ecran extends JPanel {
 		if (this.carte != null) this.carte.setEcran(null);
 		this.carte = carte;
 		if (carte != null) {
+			setPreferredSize(new Dimension(carte.getLargeur() * 32, carte.getHauteur() * 32));
 			carte.setEcran(this);
 			if (image != null) {
 				carte.dessiner(g, xBase, yBase, xBase, yBase, getWidth(), getHeight());
 				repaint();
 			}
 		} else if (image != null) {
+			setPreferredSize(null);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			repaint();
 		}

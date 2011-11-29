@@ -14,11 +14,8 @@ import javax.swing.JPanel;
 
 import ressources.*;
 
+@SuppressWarnings("serial")
 public class PlancheRessource extends JPanel {
-	private static final long serialVersionUID = 42L;
-
-
-
 	/** variable de classe contenant l'image à afficher en fond */
 	private Theme theme;
 	private int i;
@@ -28,10 +25,9 @@ public class PlancheRessource extends JPanel {
 
 	public PlancheRessource(String nom) {
 		this.theme = Ressources.getTheme(nom);
-		setPreferredSize(new Dimension(450, 110));
+		setPreferredSize(new Dimension(theme.getLargeur() * 32, theme.getHauteur() * 32));
 		i = 0;
 		j = 0;
-
 		addMouseListener(new EcouteurSouris());
 	}
 

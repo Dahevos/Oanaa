@@ -1,7 +1,5 @@
 package editeur;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +19,8 @@ import ressources.Ressources;
 import affichage.Carte;
 import affichage.Ecran;
 
+@SuppressWarnings("serial")
 public class Editeur extends JFrame{
-
-	private static final long serialVersionUID = 42L;
-
 	//On déclare notre objet JSplitPane
 	private JSplitPane split;
 	private Carte edition;
@@ -40,19 +36,16 @@ public class Editeur extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		/* contenu de gauche (planche ressources) */
-		PlancheRessource planche = new PlancheRessource("tileset.png");
-		planche.setPreferredSize(new Dimension(planche.getTheme().getLargeur()*32, planche.getTheme().getHauteur()*32));
+		PlancheRessource planche = new PlancheRessource("theme3.png");
 		gauche = new JScrollPane(planche);
-		gauche.setPreferredSize(new Dimension(planche.getTheme().getLargeur()*32+18,800));
 		gauche.getHorizontalScrollBar().setUnitIncrement(32);
 		gauche.getHorizontalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setBlockIncrement(32);
 		gauche.getVerticalScrollBar().setUnitIncrement(32);
-		//gauche.addMouseListener(planche);
 
 		/* création de la carte */
-		edition = new Carte(1500, 1500, Ressources.getElement("tileset.png", 0, 0));
-		//Carte edition = Carte.lire(new File("carte.dat"));
+		edition = new Carte(200, 200, Ressources.getElement("tileset.png", 0, 0));
+		//edition = Carte.lire(new File("carte.dat"));
 
 		/* contenu de droite (carte) */
 		Ecran ecran = new Ecran(edition);
@@ -63,18 +56,16 @@ public class Editeur extends JFrame{
 		droite.getVerticalScrollBar().setUnitIncrement(32);
 
 		/* construction du séparateur */
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gauche, droite);
+		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, gauche, droite);
+		split.setDividerLocation(gauche.getPreferredSize().width);
 
 		/* On le passe ensuite au contentPane de notre objet Fenetre (placé au centre)  */
-		this.getContentPane().add(split, BorderLayout.CENTER);
-
-
-
-
+		this.setContentPane(split);
+		
 		/* construction du menu */
 		initMenu();
 
-		this.setVisible(true);	 		
+		this.setVisible(true);
 	}
 
 
@@ -86,7 +77,7 @@ public class Editeur extends JFrame{
 		vue.add(new JMenuItem(new AbstractAction("Nouvelle carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				edition = new Carte(1500, 1500, Ressources.getElement("tileset.png", 0, 0));
+				edition = new Carte(200, 200, Ressources.getElement("tileset.png", 0, 0));
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
