@@ -14,8 +14,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeListener;
+
 import ressources.Ressources;
 
 import affichage.Carte;
@@ -30,6 +35,8 @@ public class Editeur extends JFrame{
 	private JScrollPane droite;
 	private PlancheRessource planche;
 	private String nomCarte;
+	private int numCouche;
+
 
 	public Editeur(){
 
@@ -63,12 +70,16 @@ public class Editeur extends JFrame{
 		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, gauche, droite);
 		split.setDividerLocation(gauche.getPreferredSize().width);
 
+		numCouche = 1;
+
 		/* On le passe ensuite au contentPane de notre objet Fenetre (placé au centre)  */
 		this.setContentPane(split);
 
 		/* construction du menu */
 		initMenu();
-		addMouseListener(new EcouteurSouris());
+		droite.addMouseListener(new EcouteurSouris());
+
+
 
 		this.setVisible(true);
 	}
@@ -112,6 +123,22 @@ public class Editeur extends JFrame{
 	public void initMenu() {
 		JMenuBar menubar = new JMenuBar();
 
+		//		SpinnerModel model =
+		//		        new SpinnerNumberModel(1, //initial value
+		//		                               1, //min
+		//		                               100, //max
+		//		                               1);                //step
+		//		
+//		JSlider niveauMap = new JSlider(JSlider.HORIZONTAL,
+//				0, 100, 0);
+//		niveauMap.addChangeListener(this);
+//
+//		//Turn on labels at major tick marks.
+//		niveauMap.setMajorTickSpacing(10);
+//		niveauMap.setMinorTickSpacing(1);
+//		niveauMap.setPaintTicks(true);
+//		niveauMap.setPaintLabels(true);
+
 		JMenu vue = new JMenu("Fichier");
 		menubar.add(vue);
 		vue.add(new JMenuItem(new AbstractAction("Nouvelle carte") {
@@ -136,6 +163,7 @@ public class Editeur extends JFrame{
 				edition.ecrire(SaveFromFile("Enregistrer une carte",".\\", "*.dat"));
 			}
 		}));
+		vue.addSeparator();
 		vue.add(new JMenuItem(new AbstractAction("Exporter carte en png") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -157,15 +185,9 @@ public class Editeur extends JFrame{
 		public void mouseClicked(MouseEvent e) {
 			int i = e.getX() / 32;
 			int j = e.getY() / 32;
-			try {
-				System.out.println(i);
-				System.out.println(j);
-				edition.getCase(i, j).setCouche(1, planche.getTheme().getElement(planche.getI(), planche.getJ()));
-				edition.rafraichir(i, j, i+32, j+32);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			edition.getCase(i, j).setCouche(numCouche, planche.getElemCourant());
+			edition.rafraichir(i, j, 32, 32);
+
 		}
 	}
 

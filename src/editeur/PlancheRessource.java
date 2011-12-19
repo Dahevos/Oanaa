@@ -20,7 +20,8 @@ public class PlancheRessource extends JPanel {
 	private Theme theme;
 	private int i;
 	private int j;
-
+	private Element elemCourant;
+	
 	public PlancheRessource(String nom) {
 		this.theme = Ressources.getTheme(nom);
 		setPreferredSize(new Dimension(theme.getLargeur() * 32, theme.getHauteur() * 32));
@@ -33,6 +34,10 @@ public class PlancheRessource extends JPanel {
 		return theme;
 	}
 
+	public Element getElemCourant() {
+		return elemCourant;
+	}
+	
 	public int getI() {
 		return i;
 	}
@@ -86,7 +91,12 @@ public class PlancheRessource extends JPanel {
 			// On repaint seulement les zone modifiées (à conserver ?)
 			repaint(32 * i, 32 * j, 32, 32);
 			repaint(32 * iPrec, 32 * jPrec, 32, 32);
-			//repaint();
+			try {
+				elemCourant = theme.getElement(i, j);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 }
