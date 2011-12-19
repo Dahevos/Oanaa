@@ -122,7 +122,7 @@ public class Editeur extends JFrame{
 		JMenuBar menubar = new JMenuBar();
 
 
-		
+
 		/* Menu Fichier */
 		JMenu vue = new JMenu("Fichier");
 		menubar.add(vue);
@@ -160,21 +160,34 @@ public class Editeur extends JFrame{
 				} 			}
 		}));
 
-		
+
 
 		niveauMap = new SpinnerNumberModel(1, //initial value
-						                               1, //min
-						                               100, //max
-						                               1);                //step
+				1, //min
+				100, //max
+				1);                //step
 		JSpinner jspin = new JSpinner(niveauMap);				
 		JMenu niveau = new JMenu("Niveau");
 
 		niveau.add(jspin);
 
-		
+
 		JMenu vueEdition = new JMenu("Édition");
 		menubar.add(vueEdition);
 		vueEdition.add(niveau);
+		
+		vueEdition.add(new JMenuItem(new AbstractAction("Remplir") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				for (int ligne = 0; ligne < edition.getLargeur(); ligne++ )
+					for (int colonne=0; colonne < edition.getHauteur(); colonne++) {
+						edition.getCase(ligne,colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne%planche.getElemCourants().size()).get(colonne%planche.getElemCourants().get(0).size()));
+					}
+				edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+
+			}
+		}));
 		
 		setJMenuBar(menubar);
 
@@ -182,14 +195,48 @@ public class Editeur extends JFrame{
 	}
 
 	private class EcouteurSouris extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
+
+		private boolean dessine;
+
+
+		public void mousePressed(MouseEvent e) {
+			dessine = true;
 			int i = e.getX() / 32;
 			int j = e.getY() / 32;
-			edition.getCase(i, j).setCouche((Integer) niveauMap.getValue(), planche.getElemCourant());
-			edition.rafraichir(i, j, 32, 32);
-
+			for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
+				for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
+					edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
+					edition.rafraichir(i + ligne, j + colonne, 32, 32);
+				}
 		}
+
+		public void mouseReleased(MouseEvent e) {
+			dessine = false;
+		}	
+
+		public void mouseMoved(MouseEvent e) {
+			if(dessine) {
+				System.out.println("lol");
+				int i = e.getX() / 32;
+				int j = e.getY() / 32;
+				for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
+					for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
+						edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
+						edition.rafraichir(i + ligne, j + colonne, 32, 32);
+					}
+			}
+		}
+
+		//		@Override
+		//		public void mouseClicked(MouseEvent e) {
+		//			int i = e.getX() / 32;
+		//			int j = e.getY() / 32;
+		//			for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
+		//				for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
+		//					edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
+		//					edition.rafraichir(i + ligne, j + colonne, 32, 32);
+		//				}
+		//		}
 	}
 
 	public static void main(String[] args){
