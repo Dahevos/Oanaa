@@ -91,7 +91,7 @@ public abstract class Personnage {
 		instant = 0;
 		carte.getCase(i, j).setPerso(this);
 		for (EcouteurPerso ecouteur : ecouteurs) {
-			ecouteur.carteChangee(carte);
+			ecouteur.carteChangee(this, carte);
 		}
 		return true;
 	}
@@ -99,10 +99,16 @@ public abstract class Personnage {
 	public boolean deplacer(Direction dir) {
 		if (carte == null) return false;
 
-		// Mise à jour de la direction
+		// Blocage des déplacements simultanés
 		if (deplacement != null) {
 			dirSuiv = dir;
 			return false;
+		}
+		
+		// Mise à jour de la direction
+		boolean nouvDir = ! dir.equals(this.dir);
+		if (nouvDir) {
+			this.dir = dir;
 		}
 
 		// Calcul des nouvelles coordonnées
@@ -116,20 +122,21 @@ public abstract class Personnage {
 		}
 
 		// Vérification de la validité
-		if (! carte.existe(i, j)) return false;
+		if (! carte.existe(i, j)) {
+			// La direction a changé mais on ne se déplace pas
+			if (nouvDir) carte.rafraichir(this.i, this.j - 1, this.i, this.j);
+			return false;
+		}
 
 		// Validation du déplacement
 		synchronized (ecouteurs) {
-			if ((deplacement != null) || (! carte.getCase(i, j).allouer())) return false;
-			deplacement = new Thread(new Deplacement(this.i, this.j, i, j));
+			if ((deplacement != null) || (! carte.getCase(i, j).allouer())) {
+				// La direction a changé mais on ne se déplace pas
+				if (nouvDir) carte.rafraichir(this.i, this.j - 1, this.i, this.j);
+				return false;
+			}
+			deplacement = new Thread(new Deplacement(i, j));
 		}
-		this.dir = dir;
-
-		// Mise en place de la nouvelle position
-		carte.getCase(this.i, this.j).setPerso(null);
-		this.i = i;
-		this.j = j;
-		carte.getCase(i, j).setPerso(this);
 
 		// Démarrage du déplacement
 		deplacement.start();
@@ -151,31 +158,41 @@ public abstract class Personnage {
 	}
 
 	private class Deplacement implements Runnable {
-		private final int oldI, oldJ;
+		private final int nouvI, nouvJ;
 		private final int dx, dy;
 
-		public Deplacement(int oldI, int oldJ, int newI, int newJ) {
-			this.oldI = oldI;
-			this.oldJ = oldJ;
-			dx = (newI - oldI) * 8;
-			dy = (newJ - oldJ) * 8;
+		public Deplacement(int nouvI, int nouvJ) {
+			this.nouvI = nouvI;
+			this.nouvJ = nouvJ;
+			dx = (nouvI - Personnage.this.i) * 8;
+			dy = (nouvJ - Personnage.this.j) * 8;
 		}
 
 		@Override
 		public void run() {
+			// Déplacement de l'image
 			for (int k = 1; k <= 4; k++) {
 				x += dx;
 				y += dy;
 				instant = k % 4;
 				for (EcouteurPerso ecouteur : ecouteurs) {
-					ecouteur.persoBouge(dir);
+					ecouteur.persoBouge(Personnage.this, dir);
 				}
 				if (auto) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
 			}
-			carte.getCase(oldI, oldJ).liberer();
+			
+			// Mise en place de la nouvelle position
+			Case orig = carte.getCase(Personnage.this.i, Personnage.this.j);
+			orig.liberer();
+			orig.setPerso(null);
+			Personnage.this.i = nouvI;
+			Personnage.this.j = nouvJ;
+			carte.getCase(nouvI, nouvJ).setPerso(Personnage.this);
+			
+			// Libération de la ressource
 			deplacement = null;
 			Direction dir = dirSuiv;
 			dirSuiv = null;
