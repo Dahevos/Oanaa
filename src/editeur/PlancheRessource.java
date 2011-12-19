@@ -20,8 +20,6 @@ public class PlancheRessource extends JPanel {
 	private Theme theme;
 	private int i;
 	private int j;
-	private int largeurSelection;
-	private int hauteurSelection;
 
 	public PlancheRessource(String nom) {
 		this.theme = Ressources.getTheme(nom);
@@ -33,6 +31,14 @@ public class PlancheRessource extends JPanel {
 
 	public Theme getTheme() {
 		return theme;
+	}
+
+	public int getI() {
+		return i;
+	}
+
+	public int getJ() {
+		return j;
 	}
 
 

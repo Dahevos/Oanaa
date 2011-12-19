@@ -1,6 +1,9 @@
 package editeur;
 
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -13,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
-
 import ressources.Ressources;
 
 import affichage.Carte;
@@ -24,8 +26,10 @@ public class Editeur extends JFrame{
 	//On dÃ©clare notre objet JSplitPane
 	private JSplitPane split;
 	private Carte edition;
-	JScrollPane gauche;
-	JScrollPane droite;
+	private JScrollPane gauche;
+	private JScrollPane droite;
+	private PlancheRessource planche;
+	private String nomCarte;
 
 	public Editeur(){
 
@@ -36,7 +40,7 @@ public class Editeur extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		/* contenu de gauche (planche ressources) */
-		PlancheRessource planche = new PlancheRessource("theme3.png");
+		planche = new PlancheRessource("theme3.png");
 		gauche = new JScrollPane(planche);
 		gauche.getHorizontalScrollBar().setUnitIncrement(32);
 		gauche.getHorizontalScrollBar().setBlockIncrement(32);
@@ -61,13 +65,49 @@ public class Editeur extends JFrame{
 
 		/* On le passe ensuite au contentPane de notre objet Fenetre (placÃ© au centre)  */
 		this.setContentPane(split);
-		
+
 		/* construction du menu */
 		initMenu();
+		addMouseListener(new EcouteurSouris());
 
 		this.setVisible(true);
 	}
 
+
+	/**
+	 * Afficher une boite de dialogue "ouvrir un fichier"
+	 * @param _title Title de la boite de dialogue
+	 * @param _path Répertoire initiale
+	 * @param _fileFilter Filtre de type *.jpg
+	 * @return repertoire"/"nom du fichier
+	 */
+	public String LoadFromFile(String _title, String _path, String _fileFilter) {
+		FileDialog fileDialog = new FileDialog(this, _title, FileDialog.LOAD);
+		fileDialog.setFile(_fileFilter);
+		fileDialog.setDirectory(_path);
+		this.setLocationRelativeTo(null);
+		fileDialog.setDirectory(_path);
+		fileDialog.setVisible(true);
+		return fileDialog.getDirectory() + fileDialog.getFile();
+	}
+
+
+	/**
+	 * Afficher une boite de dialogue "Enregistrer un fichier"
+	 * @param _title Title de la boite de dialogue
+	 * @param _path Répertoire initiale
+	 * @param _fileFilter Filtre de type *.jpg
+	 * @return repertoire"/"nom du fichier
+	 */
+	public String SaveFromFile(String _title, String _path, String _fileFilter) {
+		FileDialog fileDialog = new FileDialog(this, _title, FileDialog.SAVE);
+		fileDialog.setFile(_fileFilter);
+		fileDialog.setDirectory(_path);
+		this.setLocationRelativeTo(null);
+		fileDialog.setDirectory(_path);
+		fileDialog.setVisible(true);
+		return fileDialog.getDirectory() + fileDialog.getFile();
+	}
 
 	public void initMenu() {
 		JMenuBar menubar = new JMenuBar();
@@ -83,14 +123,17 @@ public class Editeur extends JFrame{
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				edition = Carte.lire(new File("carte.dat"));
-				droite.repaint();
+				// récupération du fichier sélectionné			        
+				edition = Carte.lire(new File(LoadFromFile("Charger une carte", ".\\", "*.dat")));
+				edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+				//droite.repaint();
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Enregistrer carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				edition.ecrire("save.dat");
+
+				edition.ecrire(SaveFromFile("Enregistrer une carte",".\\", "*.dat"));
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Exporter carte en png") {
@@ -107,6 +150,23 @@ public class Editeur extends JFrame{
 		setJMenuBar(menubar);
 
 
+	}
+
+	private class EcouteurSouris extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			int i = e.getX() / 32;
+			int j = e.getY() / 32;
+			try {
+				System.out.println(i);
+				System.out.println(j);
+				edition.getCase(i, j).setCouche(1, planche.getTheme().getElement(planche.getI(), planche.getJ()));
+				edition.rafraichir(i, j, i+32, j+32);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public static void main(String[] args){
