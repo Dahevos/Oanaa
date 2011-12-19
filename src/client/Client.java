@@ -11,6 +11,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import evenements.Teleporteur;
+
 import affichage.Carte;
 import affichage.Ecran;
 import affichage.Joueur;
@@ -23,7 +25,7 @@ public class Client extends JFrame {
 
 	private Joueur joueur1, joueur2;
 	private PNJ pnj;
-	private Carte carte;
+	private Carte carte1, carte2;
 	private Ecran ecran;
 
 	public Client() throws IOException {
@@ -31,27 +33,34 @@ public class Client extends JFrame {
 		/*
 		Theme theme = Ressources.getTheme("tileset.png");
 
-		Carte carte = new Carte(20 * theme.getLargeur(), theme.getHauteur(),
+		carte1 = new Carte(20 * theme.getLargeur(), theme.getHauteur(),
 				Ressources.getElement("theme3.png", 0, 0));
 
 		for (int j = 0; j < theme.getHauteur(); j++)
 			for (int k = 0; k < 20; k++)
 				for (int i = 0; i < theme.getLargeur(); i++)
-					carte.getCase(i + k * theme.getLargeur(), j).setCouche(1, theme.getElement(i, j));
+					carte1.getCase(i + k * theme.getLargeur(), j).setCouche(1, theme.getElement(i, j));
 
 		System.out.println("Début écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		carte.ecrire(new File("carte.dat"));
+		carte1.ecrire(new File("carte1.dat"));
 		System.out.println("Fin écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
+		if (true) return;
 		/**/
 		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		carte = Carte.lire(new File("carte.dat"));
+		carte1 = Carte.lire(new File("carte2.dat"));
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 
-		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte, 3, 3);
-		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte, 5, 5);
+		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
+		carte2 = Carte.lire(new File("carte1.dat"));
+		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
+
+		carte1.getCase(0, 0).ajouterActionSol(new Teleporteur(carte2.getCase(10, 10)));
+		
+		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 3);
+		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 5, 5);
 
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
-			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte, 5 + i, 20 + j, 100, 1000);
+			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 5 + i, 20 + j, 100, 1000);
 
 		ecran = new Ecran(joueur1);
 		ecran.addKeyListener(joueur1);
@@ -78,10 +87,16 @@ public class Client extends JFrame {
 				ecran.setPerso(pnj);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Carte") {
+		vue.add(new JMenuItem(new AbstractAction("Carte 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCarte(carte);
+				ecran.setCarte(carte1);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("Carte 2") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setCarte(carte2);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Rien") {
@@ -116,7 +131,7 @@ public class Client extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					carte.exporterImage(new File("carte.png"), "PNG");
+					carte1.exporterImage(new File("carte.png"), "PNG");
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(
 							Client.this, e.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);

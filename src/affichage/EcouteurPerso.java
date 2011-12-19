@@ -1,6 +1,6 @@
 package affichage;
 
 public interface EcouteurPerso {
-	public void carteChangee(Carte carte);
-	public void persoBouge(Direction dir);
+	public void carteChangee(Personnage perso, Carte carte);
+	public void persoBouge(Personnage perso, Direction dir);
 }

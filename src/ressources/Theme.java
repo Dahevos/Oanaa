@@ -2,7 +2,8 @@ package ressources;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 
@@ -25,7 +26,24 @@ public class Theme {
 	private final String nom;
 	private final File fichier;
 	private BufferedImage theme;
-	private final HashMap<Integer, Element> elements = new HashMap<Integer, Element>();
+	
+	/**
+	 * Ensemble des éléments déjà chargés.
+	 * <p>
+	 * L'utilisation d'une <code>WeakHashMap</code> permet de libérer automatiquement une entrée
+	 * lorsqu'il n'y a plus de hard référence sur la clé correspondante.
+	 * <p>
+	 * De plus, seul les éléments ont des hard références sur les clés, donc lorsque ceux-ci
+	 * sont libérés, les clés le sont aussi.
+	 * <p>
+	 * Enfin, comme on ne stocke que des <code>WeakReference</code>s sur les <code>Element</code>s,
+	 * ceux-ci sont libérés dès que l'utilisateur ne les référencent plus.
+	 * <p>
+	 * Conclusion : aucune référence vers l'élément (par utilisateur) => élément libéré => plus de
+	 * référence vers la clé => entrée libérée
+	 */
+	private final WeakHashMap<Element.Cle, WeakReference<Element>> elements =
+			new WeakHashMap<Element.Cle, WeakReference<Element>>();
 	
 	/**
 	 * Thème vide (aucune case)
@@ -106,20 +124,38 @@ public class Theme {
 	 * @throws IOException si l'élément ne peut pas être chargé
 	 */
 	public Element getElement(int i, int j) throws IOException {
-		if (i >= largeur || j >= hauteur) throw new IOException(
-				"Il n'y a pas d'élément (" + i + ", " + j +") dans le thème " + fichier);
+		return getElement(new Element.Cle(this, i, j));
+	}
+	
+	/**
+	 * Retourne l'élément identifié par <code>cle</code> dans ce thème.
+	 * @param cle identifiant de l'élément dans ce thème
+	 * @return l'élément spécifié
+	 * @throws IOException si l'élément ne peut pas être chargé
+	 */
+	public Element getElement(Element.Cle cle) throws IOException {
+		if (cle.i >= largeur || cle.j >= hauteur) throw new IOException(
+				"Il n'y a pas d'élément " + cle +" dans le thème " + nom);
 		
-		final int cle = i + largeur * j;
-		Element res = elements.get(cle);
+		// Recherche de l'élément parmi ceux déjà chargés
+		WeakReference<Element> ref = elements.get(cle);
+		Element res = ref == null ? null : ref.get();
+		
 		if (res == null) {
+			// Chargement de l'élément
 			if (theme == null) theme = ImageIO.read(fichier);
 			BufferedImage image = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-			image.getGraphics().drawImage(theme.getSubimage(32 * i, 32 * j, 32, 32), 0, 0, null);
-			res = new Element(nom, i, j, image);
-			elements.put(cle, res);
+			image.getGraphics().drawImage(theme.getSubimage(32 * cle.i, 32 * cle.j, 32, 32), 0, 0, null);
+			res = new Element(nom, cle, image);
+			elements.put(cle, new WeakReference<Element>(res));
 		}
 		
 		return res;
+	}
+	
+	@Override
+	public String toString() {
+		return nom;
 	}
 	
 	public void nettoyer() {

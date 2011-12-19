@@ -92,6 +92,23 @@ public class Ressources {
 			return null;
 		}
 	}
+	
+	/**
+	 * Retourne l'élément identifié par <code>cle</code> dans le thème nommé <code>nom</code>, ou
+	 * <code>null</code> si elle n'est pas disponible.
+	 * @param nomTheme nom du thème
+	 * @param i numéro de la ligne
+	 * @param j numéro de la colonne
+	 * @return l'élément spécifié
+	 */
+	static Element getElement(String nomTheme, Element.Cle cle) {
+		try {
+			return getTheme(nomTheme).getElement(cle);
+		} catch (IOException e) {
+			System.err.println(e);
+			return null;
+		}
+	}
 
 	/**
 	 * Retourne l'apparence nommée <code>nom</code>, ou <code>Apparence.APPARENCE_DEFAUT</code>

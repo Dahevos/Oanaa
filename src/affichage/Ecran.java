@@ -151,12 +151,14 @@ public class Ecran extends JPanel {
 
 	private class Ecouteur implements EcouteurPerso {
 		@Override
-		public void carteChangee(Carte carte) {
+		public void carteChangee(Personnage perso, Carte carte) {
+			xBase = perso.getX() - getWidth() / 2 + 16;
+			yBase = perso.getY() - getHeight() / 2 + 24;
 			changerCarte(carte);
 		}
 
 		@Override
-		public void persoBouge(Direction dir) {
+		public void persoBouge(Personnage perso, Direction dir) {
 			synchronized (Ecran.this) {
 				final int largeur = getWidth();
 				final int hauteur = getHeight();

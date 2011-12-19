@@ -3,6 +3,9 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import evenements.ActionSol;
 
 import ressources.Element;
 
@@ -18,6 +21,8 @@ public class Case implements Serializable {
 	private transient Personnage perso = null;
 	private transient boolean libre = true;
 	
+	private final ArrayList<ActionSol> actionsSol = new ArrayList<ActionSol>();
+	
 	public Case(Carte carte, int i, int j, int couchesInf, int couchesSup) {
 		this.carte = carte;
 		this.i = i;
@@ -26,6 +31,18 @@ public class Case implements Serializable {
 		nbCouches = couchesInf + couchesSup;
 		couches = new Element[nbCouches];
 		for (int k = 0; k < nbCouches; k++) couches[k] = null;
+	}
+	
+	public Carte getCarte() {
+		return carte;
+	}
+	
+	public int getI() {
+		return i;
+	}
+	
+	public int getJ() {
+		return j;
 	}
 	
 	public void setCouche(int couche, Element element) {
@@ -38,6 +55,11 @@ public class Case implements Serializable {
 	
 	public void setPerso(Personnage perso) {
 		this.perso = perso;
+		if (perso != null) {
+			for (ActionSol actionSol : actionsSol) {
+				actionSol.declencher(this, perso);
+			}
+		}
 	}
 	
 	public boolean estBloquee() {
@@ -46,6 +68,14 @@ public class Case implements Serializable {
 
 	public void setBloquee(boolean bloquee) {
 		this.bloquee = bloquee;
+	}
+	
+	public void ajouterActionSol(ActionSol actionSol) {
+		actionsSol.add(actionSol);
+	}
+	
+	public void supprimerActionSol(ActionSol actionSol) {
+		actionsSol.remove(actionSol);
 	}
 	
 	public boolean allouer() {
