@@ -34,6 +34,7 @@ public class Editeur extends JFrame{
 	private JScrollPane gauche;
 	private JScrollPane droite;
 	private PlancheRessource planche;
+	private Ecran ecran;
 	SpinnerModel niveauMap;
 
 
@@ -59,7 +60,7 @@ public class Editeur extends JFrame{
 		//edition = Carte.lire(new File("carte.dat"));
 
 		/* contenu de droite (carte) */
-		Ecran ecran = new Ecran(edition);
+		ecran = new Ecran(edition);
 		droite = new JScrollPane(ecran);
 		droite.getHorizontalScrollBar().setUnitIncrement(32);
 		droite.getHorizontalScrollBar().setBlockIncrement(32);
@@ -75,7 +76,7 @@ public class Editeur extends JFrame{
 
 		/* construction du menu */
 		initMenu();
-		droite.addMouseListener(new EcouteurSouris());
+		ecran.addMouseListener(new EcouteurSouris());
 
 
 
@@ -86,7 +87,7 @@ public class Editeur extends JFrame{
 	/**
 	 * Afficher une boite de dialogue "ouvrir un fichier"
 	 * @param _title Title de la boite de dialogue
-	 * @param _path Répertoire initiale
+	 * @param _path RÃ©pertoire initiale
 	 * @param _fileFilter Filtre de type *.jpg
 	 * @return repertoire"/"nom du fichier
 	 */
@@ -104,7 +105,7 @@ public class Editeur extends JFrame{
 	/**
 	 * Afficher une boite de dialogue "Enregistrer un fichier"
 	 * @param _title Title de la boite de dialogue
-	 * @param _path Répertoire initiale
+	 * @param _path RÃ©pertoire initiale
 	 * @param _fileFilter Filtre de type *.jpg
 	 * @return repertoire"/"nom du fichier
 	 */
@@ -130,14 +131,16 @@ public class Editeur extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				edition = new Carte(200, 200, Ressources.getElement("tileset.png", 0, 0));
+				ecran.setCarte(edition);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// récupération du fichier sélectionné			        
+				// rÃ©cupÃ©ration du fichier sÃ©lectionnÃ©			        
 				edition = Carte.lire(new File(LoadFromFile("Charger une carte", ".\\", "*.dat")));
-				edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+				ecran.setCarte(edition);
+				//edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
 				//droite.repaint();
 			}
 		}));
@@ -172,10 +175,10 @@ public class Editeur extends JFrame{
 		niveau.add(jspin);
 
 
-		JMenu vueEdition = new JMenu("Édition");
+		JMenu vueEdition = new JMenu("Ã©dition");
 		menubar.add(vueEdition);
 		vueEdition.add(niveau);
-		
+
 		vueEdition.add(new JMenuItem(new AbstractAction("Remplir") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -188,7 +191,7 @@ public class Editeur extends JFrame{
 
 			}
 		}));
-		
+
 		setJMenuBar(menubar);
 
 
