@@ -2,6 +2,8 @@ package modele;
 import java.awt.Graphics;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -102,7 +104,7 @@ public class Carte implements Serializable {
 
 	public static void ecrire(Carte carte, File fichier) {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fichier));
+			ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichier)));
 			out.writeObject(carte);
 			out.close();
 		} catch (IOException e) {
@@ -121,7 +123,8 @@ public class Carte implements Serializable {
 	public static Carte lire(File fichier) {
 		ObjectInputStream in;
 		try {
-			in = new ObjectInputStream(new FileInputStream(fichier));
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichier)));
+			// in = new ObjectInputStream(new FileInputStream(fichier));
 		} catch (IOException e) {
 			System.err.println("Le fichier " + fichier + "ne peut pas être lu :\n" + e);
 			return null;

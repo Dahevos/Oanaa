@@ -7,8 +7,8 @@ import modele.Carte;
 
 /**
  * Classe abstraite représentant un caméra.<br>
- * Cette classe est la passerelle entre une carte et
- * un écran : elle est chargée d'afficher une vue de la carte dans la zone de dessin de l'écran.
+ * Cette classe est la passerelle entre une carte et un écran : elle est chargée d'afficher une vue
+ * de la carte dans la zone de dessin de l'écran.
  * Une carte étant souvent trop grande pour s'afficher entièrement dans un écran, cette classe permet
  * également de spécifier la zone à afficher.<br>
  * Les différentes sous-classes doivent donc fournir différents moyen de se déplacer dans la
