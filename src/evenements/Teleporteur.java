@@ -1,7 +1,7 @@
 package evenements;
 
-import affichage.Case;
-import affichage.Personnage;
+import modele.Case;
+import modele.Personnage;
 
 public class Teleporteur implements ActionSol {
 	private static final long serialVersionUID = 42L;

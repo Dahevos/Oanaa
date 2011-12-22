@@ -7,7 +7,8 @@ import java.util.InputMismatchException;
 
 import javax.imageio.ImageIO;
 
-import affichage.Direction;
+import modele.Direction;
+
 
 /**
  * Classe contenant l'apparence d'un personnage (images des différentes positions possibles).

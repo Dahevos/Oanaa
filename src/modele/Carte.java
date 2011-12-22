@@ -1,4 +1,4 @@
-package affichage;
+package modele;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
+import affichage.Camera;
 
 import ressources.Element;
 
@@ -23,7 +26,7 @@ public class Carte implements Serializable {
 	private final int largeur;
 	private final int hauteur;
 
-	private transient Ecran ecran = null;
+	private transient ArrayList<Camera> cameras = new ArrayList<Camera>();
 
 	public Carte(int largeur, int hauteur) {
 		this(largeur, hauteur, null);
@@ -40,12 +43,12 @@ public class Carte implements Serializable {
 		}
 	}
 
-	public void setEcran(Ecran ecran) {
-		this.ecran = ecran;
+	public void ajouterCamera(Camera camera) {
+		cameras.add(camera);
 	}
 
-	public Ecran getEcran() {
-		return ecran;
+	public void retirerCamera(Camera camera) {
+		cameras.remove(camera);
 	}
 
 	public boolean existe(int i, int j) {
@@ -65,18 +68,21 @@ public class Carte implements Serializable {
 	}
 
 	public void rafraichir(int iMin, int jMin, int iMax, int jMax) {
-		if (ecran != null)
-			ecran.rafraichirCarte(32 * iMin, 32 * jMin, 32 * iMax + 31, 32 * jMax + 31);
+		for (Camera camera : cameras) {
+			camera.rafraichir(32 * iMin, 32 * jMin, 32 * iMax + 31, 32 * jMax + 31);
+		}
 	}
 
 	public void dessiner(Graphics g, int xBase, int yBase,
 			int xMin, int yMin, int largeur, int hauteur) {
 		// Calcul de la zone à dessiner
 		int iMin = xMin < 0 ? (xMin - 31) / 32 : xMin / 32;
-		int iMax = ((xMin + largeur - 1) + 31) / 32;
+		int iMax = (xMin + largeur - 1) / 32;
 
 		int jMin = yMin < 0 ? (yMin - 31) / 32 : yMin / 32;
-		int jMax = ((yMin + hauteur - 1) + 31) / 32;
+		int jMax = (yMin + hauteur - 1) / 32;
+		
+		// System.out.println("Dessin de [" + iMin + ", " + iMax + "]x[" + jMin + ", " + jMax + "]");
 
 		// Affichage des cases
 		for (int j = jMin; j <= jMax; j++)
@@ -139,5 +145,10 @@ public class Carte implements Serializable {
 				BufferedImage.TYPE_INT_ARGB);
 		dessiner(image.getGraphics(), 0, 0, 0, 0, 32 * largeur, 32 * hauteur);
 		ImageIO.write(image, type, fichier);
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		cameras = new ArrayList<Camera>();
 	}
 }

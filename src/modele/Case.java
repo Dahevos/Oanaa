@@ -1,4 +1,4 @@
-package affichage;
+package modele;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectInputStream;

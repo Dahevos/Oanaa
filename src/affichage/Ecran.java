@@ -1,22 +1,39 @@
 package affichage;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+/**
+ * Classe contenant le composant graphique destiné à afficher une scène.
+ * Celui-ci contient principalement une image "OffScreen" qui doit être gérée par une caméra.
+ * Un écran est donc fortement lié à sa caméra (lorsqu'il en a une) : celle-ci est responsable
+ * de toutes les tâches de dessin.
+ */
 @SuppressWarnings("serial")
 public class Ecran extends JPanel {
-	private Personnage perso = null;
-	private Carte carte = null;
-	private int xBase = 0, yBase = 0;
+	/**
+	 * Caméra associée à l'écran
+	 */
+	private Camera camera = null;
+	
+	/**
+	 * Image "OffScreen", contenant la scène
+	 */
 	private BufferedImage image = null;
+	
+	/**
+	 * Objet utilisé pour dessiner dans l'offscreen
+	 */
 	private Graphics g = null;
-	private final EcouteurPerso ecouteur = new Ecouteur();
 
+	/**
+	 * Construit un nouvel écran, prêt à être attaché à une caméra.
+	 */
 	public Ecran() {
 		redimensionner();
 		addComponentListener(new ComponentAdapter() {
@@ -29,169 +46,71 @@ public class Ecran extends JPanel {
 		setFocusable(true);
 	}
 
-	public Ecran(Personnage perso) {
-		this();
-		setPerso(perso);
-	}
-
-	public Ecran(Carte carte) {
-		this();
-		setCarte(carte);
-	}
-
-	public void setPerso(Personnage perso) {
-		if (perso == this.perso) return;
-		if (this.perso != null) {
-			this.perso.supprimerEcouteur(ecouteur);
-			this.perso.setAuto(true);
+	/**
+	 * Attache cet écran à la caméra <code>camera</code>.
+	 * <p>Cette méthode est fortement liée à la méthode <code>setEcran()</code> de la classe
+	 * <code>Camera</code>.
+	 * @param camera caméra à rattacher à cet écran
+	 */
+	public void setCamera(Camera camera) {
+		if (this.camera == camera) return;
+		if (this.camera != null) {
+			Camera cameraPrec = this.camera;
+			this.camera = null;
+			cameraPrec.setEcran(null);
 		}
-		this.perso = perso;
-		if (perso == null) {
-			xBase = 0;
-			yBase = 0;
-			if (carte != null) {
-				carte.dessiner(g, 0, 0, 0, 0, getWidth(), getHeight());
-				repaint();
+		this.camera = camera;
+		if (camera != null) camera.setEcran(this);
+		adapterCamera();
+	}
+	
+	/**
+	 * Paramètre la caméra de cet écran pour afficher correctement ses données dans celui-ci.
+	 * Cela permet de transmettre les dimensions de l'écran ainsi que l'objet de dessin.
+	 */
+	private void adapterCamera() {
+		if (camera != null) {
+			camera.redimensionner(getWidth(), getHeight(), g);
+		} else if (g != null) {
+			synchronized (g) {
+				g.fillRect(0, 0, getWidth(), getHeight());
 			}
-		} else {
-			xBase = perso.getX() - getWidth() / 2 + 16;
-			yBase = perso.getY() - getHeight() / 2 + 24;
-			changerCarte(perso.getCarte());
-			perso.setAuto(false);
-			perso.ajouterEcouteur(ecouteur);
 		}
+		repaint();
 	}
 
-	public Personnage getPerso() {
-		return perso;
+	/**
+	 * Retourne la caméra attachée à cet écran.
+	 * @return la caméra attachée à cet écran
+	 */
+	public Camera getCamera() {
+		return camera;
 	}
 
-	public void setCarte(Carte carte) {
-		if (perso != null) {
-			perso.supprimerEcouteur(ecouteur);
-			perso.setAuto(true);
-		}
-		perso = null;
-		xBase = 0;
-		yBase = 0;
-		changerCarte(carte);
-	}
-
-	public Carte getCarte() {
-		return carte;
-	}
-
-	private void changerCarte(Carte carte) {
-		if (this.carte != null) this.carte.setEcran(null);
-		this.carte = carte;
-		if (carte != null) {
-			setPreferredSize(new Dimension(carte.getLargeur() * 32, carte.getHauteur() * 32));
-			carte.setEcran(this);
-			if (image != null) {
-				carte.dessiner(g, xBase, yBase, xBase, yBase, getWidth(), getHeight());
-				repaint();
-			}
-		} else if (image != null) {
-			setPreferredSize(null);
-			g.fillRect(0, 0, getWidth(), getHeight());
-			repaint();
-		}
-	}
-
-	synchronized private void redimensionner() {
+	/**
+	 * Redimensionne l'offscreen et ré-adapte la caméra.
+	 */
+	private void redimensionner() {
 		final int largeur = getWidth();
 		final int hauteur = getHeight();
-		if (perso != null) {
-			xBase = perso.getX() - largeur / 2 + 16;
-			yBase = perso.getY() - hauteur / 2 + 24;
-		}
 
 		if (largeur > 0 && hauteur > 0) {
-			image = new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_ARGB);
-			if (g != null) g.dispose();
+			// Transparency.OPAQUE provoque des bug... Pourquoi ?
+			image = getGraphicsConfiguration().createCompatibleImage(largeur, hauteur, Transparency.TRANSLUCENT);
 			g = image.createGraphics();
 			g.setColor(Color.BLACK);
-
-			if (carte != null) {
-				carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, hauteur);
-			} else {
-				g.fillRect(0, 0, largeur, hauteur);
-			}
-			repaint();
+			adapterCamera();
 		} else {
 			image = null;
 			g = null;
 		}
 	}
 
-	synchronized public void rafraichirCarte(int xMin, int yMin, int xMax, int yMax) {
-		if (image == null || carte == null) return;
-
-		xMin = xMin < xBase ? xBase : xMin;
-		yMin = yMin < yBase ? yBase : yMin;
-
-		final int xLim = xBase + getWidth() - 1;
-		final int yLim = yBase + getHeight() - 1;
-		xMax = xMax > xLim ? xLim : xMax;
-		yMax = yMax > yLim ? yLim : yMax;
-
-		final int largeur = xMax - xMin;
-		final int hauteur = yMax - yMin;
-		if (largeur <= 0 || hauteur <= 0) return;
-
-		carte.dessiner(g, xBase, yBase, xMin, yMin, largeur, hauteur);
-		repaint(xMin - xBase, yMin - yBase, largeur, hauteur);
-	}
-
 	@Override
 	protected void paintComponent(Graphics g) {
-		if (image == null) super.paintComponent(g);
-		else g.drawImage(image, 0, 0, null);
-	}
-
-	private class Ecouteur implements EcouteurPerso {
-		@Override
-		public void carteChangee(Personnage perso, Carte carte) {
-			xBase = perso.getX() - getWidth() / 2 + 16;
-			yBase = perso.getY() - getHeight() / 2 + 24;
-			changerCarte(carte);
-		}
-
-		@Override
-		public void persoBouge(Personnage perso, Direction dir) {
-			synchronized (Ecran.this) {
-				final int largeur = getWidth();
-				final int hauteur = getHeight();
-
-				xBase = perso.getX() - largeur / 2 + 16;
-				yBase = perso.getY() - hauteur / 2 + 24;
-
-				if (image == null) return;
-
-				switch (dir) {
-				case BAS:
-					g.copyArea(0, 8, largeur, hauteur - 8, 0, -8);
-					carte.dessiner(g, xBase, yBase, xBase, yBase + hauteur - 8, largeur, 8);
-					carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY() - 8, 32, 56);
-					break;
-				case GAUCHE:
-					g.copyArea(0, 0, largeur - 8, hauteur, 8, 0);
-					carte.dessiner(g, xBase, yBase, xBase, yBase, 8, hauteur);
-					carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY(), 40, 48);
-					break;
-				case DROITE:
-					g.copyArea(8, 0, largeur - 8, hauteur, -8, 0);
-					carte.dessiner(g, xBase, yBase, xBase + largeur - 8, yBase, 8, hauteur);
-					carte.dessiner(g, xBase, yBase, perso.getX() - 8, perso.getY(), 40, 48);
-					break;
-				case HAUT:
-					g.copyArea(0, 0, largeur, hauteur - 8, 0, 8);
-					carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, 8);
-					carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY(), 32, 56);
-					break;
-				}
-				repaint();
-			}
+		if (image == null || this.g == null) super.paintComponent(g);
+		else synchronized (this.g) {
+			g.drawImage(image, 0, 0, null);
 		}
 	}
 }

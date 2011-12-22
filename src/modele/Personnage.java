@@ -1,4 +1,4 @@
-package affichage;
+package modele;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public abstract class Personnage {
 		ecouteurs.add(ecouteur);
 	}
 	
-	public void supprimerEcouteur(EcouteurPerso ecouteur) {
+	public void retirerEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.remove(ecouteur);
 	}
 
@@ -175,10 +175,17 @@ public abstract class Personnage {
 				x += dx;
 				y += dy;
 				instant = k % 4;
+
 				for (EcouteurPerso ecouteur : ecouteurs) {
 					ecouteur.persoBouge(Personnage.this, dir);
 				}
-				if (auto) carte.rafraichir(i - 1, j - 2, i + 1, j + 1);
+				// Mise à jour de la carte
+				if (auto) switch(dir) {
+				case BAS: carte.rafraichir(i, j - 1, i, j + 1); break;
+				case GAUCHE: carte.rafraichir(i - 1, j - 1, i, j); break;
+				case DROITE: carte.rafraichir(i, j - 1, i + 1, j); break;
+				case HAUT: carte.rafraichir(i, j - 2, i, j); break;
+				}
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}

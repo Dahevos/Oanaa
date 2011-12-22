@@ -21,10 +21,13 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 
+import modele.Carte;
+
+import affichage.CameraFixe;
+import affichage.Ecran;
+
 import ressources.Ressources;
 
-import affichage.Carte;
-import affichage.Ecran;
 
 @SuppressWarnings("serial")
 public class Editeur extends JFrame{
@@ -35,6 +38,7 @@ public class Editeur extends JFrame{
 	private JScrollPane droite;
 	private PlancheRessource planche;
 	private Ecran ecran;
+	private CameraFixe camera;
 	SpinnerModel niveauMap;
 
 
@@ -60,7 +64,8 @@ public class Editeur extends JFrame{
 		//edition = Carte.lire(new File("carte.dat"));
 
 		/* contenu de droite (carte) */
-		ecran = new Ecran(edition);
+		ecran = new Ecran();
+		camera = new CameraFixe(edition, ecran);
 		droite = new JScrollPane(ecran);
 		droite.getHorizontalScrollBar().setUnitIncrement(32);
 		droite.getHorizontalScrollBar().setBlockIncrement(32);
@@ -131,7 +136,7 @@ public class Editeur extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				edition = new Carte(200, 200, Ressources.getElement("tileset.png", 0, 0));
-				ecran.setCarte(edition);
+				camera.setCarte(edition);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
@@ -139,7 +144,7 @@ public class Editeur extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				// récupération du fichier sélectionné			        
 				edition = Carte.lire(new File(LoadFromFile("Charger une carte", ".\\", "*.dat")));
-				ecran.setCarte(edition);
+				camera.setCarte(edition);
 				//edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
 				//droite.repaint();
 			}

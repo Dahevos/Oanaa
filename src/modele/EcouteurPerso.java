@@ -1,4 +1,4 @@
-package affichage;
+package modele;
 
 public interface EcouteurPerso {
 	public void carteChangee(Personnage perso, Carte carte);

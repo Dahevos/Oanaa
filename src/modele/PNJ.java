@@ -1,4 +1,4 @@
-package affichage;
+package modele;
 import ressources.Apparence;
 
 

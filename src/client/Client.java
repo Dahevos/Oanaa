@@ -11,27 +11,34 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import modele.Carte;
+import modele.Joueur;
+import modele.PNJ;
+
 import evenements.Teleporteur;
 
-import affichage.Carte;
+import affichage.CameraFantome;
+import affichage.CameraFixe;
+import affichage.CameraPerso;
 import affichage.Ecran;
-import affichage.Joueur;
-import affichage.PNJ;
 
 import ressources.Ressources;
 
 @SuppressWarnings("serial")
 public class Client extends JFrame {
 
+	private Carte carte1, carte2;
+	private CameraFixe cameraFixe;
 	private Joueur joueur1, joueur2;
 	private PNJ pnj;
-	private Carte carte1, carte2;
+	private CameraPerso cameraPerso;
+	private CameraFantome cameraFantome;
 	private Ecran ecran;
 
 	public Client() throws IOException {
 		long debut = System.currentTimeMillis();
 		/*
-		Theme theme = Ressources.getTheme("tileset.png");
+		ressources.Theme theme = Ressources.getTheme("tileset.png");
 
 		carte1 = new Carte(20 * theme.getLargeur(), theme.getHauteur(),
 				Ressources.getElement("theme3.png", 0, 0));
@@ -42,28 +49,35 @@ public class Client extends JFrame {
 					carte1.getCase(i + k * theme.getLargeur(), j).setCouche(1, theme.getElement(i, j));
 
 		System.out.println("Début écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		carte1.ecrire(new File("carte1.dat"));
+		carte1.ecrire(new File("carte2.dat"));
 		System.out.println("Fin écriture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 		if (true) return;
-		/**/
+		/*/
 		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		carte1 = Carte.lire(new File("carte2.dat"));
+		carte1 = Carte.lire(new File("carte1.dat"));
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 
 		System.out.println("Début lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
-		carte2 = Carte.lire(new File("carte1.dat"));
+		carte2 = Carte.lire(new File("carte2.dat"));
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
+		//*/
 
 		carte1.getCase(0, 0).ajouterActionSol(new Teleporteur(carte2.getCase(10, 10)));
-		
+
 		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 3);
 		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 5, 5);
 
+		//*
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
 			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 5 + i, 20 + j, 100, 1000);
+		//*/
 
-		ecran = new Ecran(joueur1);
+		ecran = new Ecran();
 		ecran.addKeyListener(joueur1);
+		
+		cameraFixe = new CameraFixe(carte1);
+		cameraPerso = new CameraPerso(joueur1, ecran);
+		cameraFantome = new CameraFantome(carte1);
 
 		JMenuBar menubar = new JMenuBar();
 
@@ -72,37 +86,48 @@ public class Client extends JFrame {
 		vue.add(new JMenuItem(new AbstractAction("Joueur 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setPerso(joueur1);
+				cameraPerso.setPerso(joueur1);
+				ecran.setCamera(cameraPerso);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Joueur 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setPerso(joueur2);
+				cameraPerso.setPerso(joueur2);
+				ecran.setCamera(cameraPerso);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("PNJ") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setPerso(pnj);
+				cameraPerso.setPerso(pnj);
+				ecran.setCamera(cameraPerso);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Carte 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCarte(carte1);
+				cameraFixe.setCarte(carte1);
+				ecran.setCamera(cameraFixe);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Carte 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCarte(carte2);
+				cameraFixe.setCarte(carte2);
+				ecran.setCamera(cameraFixe);
+			}
+		}));
+		vue.add(new JMenuItem(new AbstractAction("Fantome") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.setCamera(cameraFantome);
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Rien") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCarte(null);
+				ecran.setCamera(null);
 			}
 		}));
 
@@ -124,6 +149,13 @@ public class Client extends JFrame {
 				ecran.addKeyListener(joueur2);
 			}
 		}));
+		controle.add(new JMenuItem(new AbstractAction("Rien") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecran.removeKeyListener(joueur1);
+				ecran.removeKeyListener(joueur2);
+			}
+		}));
 
 		JMenu outils = new JMenu("Outils");
 		menubar.add(outils);
@@ -138,6 +170,7 @@ public class Client extends JFrame {
 				} 
 			}
 		}));
+		//*/
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(menubar);
