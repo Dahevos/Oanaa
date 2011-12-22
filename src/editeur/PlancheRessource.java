@@ -149,20 +149,14 @@ public class PlancheRessource extends JPanel {
 					ArrayList<Element> elemEnCour = new ArrayList<Element>();
 					for (int jCour = j; jCour < newJ +1; jCour++) {
 						try {
-							System.out.println("iCour = " + iCour +"; jCour = " + jCour);
 							elemEnCour.add(theme.getElement(iCour, jCour ));
-							System.out.println(theme.getElement(iCour, jCour));
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
 					elemCourants.add(elemEnCour);
-					System.out.println("---------------");
-					for(int p=0; p < elemCourants.size(); p++)
-						for (int t=0; t < elemCourants.get(p).size(); t++)
-							System.out.println(elemCourants.get(p).get(t));
-					System.out.println("---------------");
+
 
 				}
 				repaint(32 * i, 32 * j, elemCourants.size()*32, elemCourants.get(0).size()*32);

@@ -170,8 +170,8 @@ public class Editeur extends JFrame{
 
 
 
-		niveauMap = new SpinnerNumberModel(1, //initial value
-				1, //min
+		niveauMap = new SpinnerNumberModel(0, //initial value
+				0, //min
 				100, //max
 				1);                //step
 		JSpinner jspin = new JSpinner(niveauMap);				
