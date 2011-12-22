@@ -1,4 +1,6 @@
 package ressources;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +12,11 @@ import java.util.HashMap;
  * @author Sébastien LENTINI
  */
 public class Ressources {
+	/**
+	 * Configuration graphique à utiliser pour charger les images.
+	 */
+	private static GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+	
 	/**
 	 * Emplacement du répertoire contenant les ressources.
 	 */
@@ -40,6 +47,24 @@ public class Ressources {
 	 */
 	private Ressources() {}
 
+	
+	/**
+	 * Retourne la configuration graphique actuellement utilisée pour charger les images.
+	 * @return la configuration graphique actuellement utilisée
+	 */
+	public static GraphicsConfiguration getConfig() {
+		return config;
+	}
+	
+	/**
+	 * Modifie la configuration graphique à utiliser pour charger les images.
+	 * <br>Remarque : cette méthode n'a aucun effet sur les images déjà chargées.
+	 * @param config nouvelle configuration graphique
+	 */
+	public static void setConfig(GraphicsConfiguration config) {
+		Ressources.config = config;
+	}
+	
 	/**
 	 * Retourne l'emplacement du répertoire contenant les ressources.
 	 * @return l'emplacement du répertoire contenant les ressources

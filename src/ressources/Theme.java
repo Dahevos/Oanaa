@@ -1,4 +1,5 @@
 package ressources;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -144,8 +145,8 @@ public class Theme {
 		if (res == null) {
 			// Chargement de l'élément
 			if (theme == null) theme = ImageIO.read(fichier);
-			BufferedImage image = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-			image.getGraphics().drawImage(theme.getSubimage(32 * cle.i, 32 * cle.j, 32, 32), 0, 0, null);
+			BufferedImage image = Ressources.getConfig().createCompatibleImage(32, 32, Transparency.TRANSLUCENT);
+			image.createGraphics().drawImage(theme.getSubimage(32 * cle.i, 32 * cle.j, 32, 32), 0, 0, null);
 			res = new Element(nom, cle, image);
 			elements.put(cle, new WeakReference<Element>(res));
 		}

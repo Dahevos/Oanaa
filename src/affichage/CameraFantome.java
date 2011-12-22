@@ -98,7 +98,7 @@ public class CameraFantome extends Camera {
 					if (yBase < yBaseMax) {
 						yBase += increment;
 						yBase = yBase > yBaseMax ? yBaseMax : yBase;
-						yLim = yBase + largeur - 1;
+						yLim = yBase + hauteur - 1;
 						if (ecran == null || g == null) return;
 						synchronized (g) {
 							g.copyArea(0, increment, largeur, hauteur - increment, 0, -increment);
@@ -110,7 +110,7 @@ public class CameraFantome extends Camera {
 					if (xBase > 0) {
 						xBase -= increment;
 						xBase = xBase < 0 ? 0 : xBase;
-						xLim = xBase + hauteur - 1;
+						xLim = xBase + largeur - 1;
 						if (ecran == null || g == null) return;
 						synchronized (g) {
 							g.copyArea(0, 0, largeur - increment, hauteur, increment, 0);
@@ -122,7 +122,7 @@ public class CameraFantome extends Camera {
 					if (xBase < xBaseMax) {
 						xBase += increment;
 						xBase = xBase > xBaseMax ? xBaseMax : xBase;
-						xLim = xBase + hauteur - 1;
+						xLim = xBase + largeur - 1;
 						if (ecran == null || g == null) return;
 						synchronized (g) {
 							g.copyArea(increment, 0, largeur - increment, hauteur, -increment, 0);
@@ -132,8 +132,9 @@ public class CameraFantome extends Camera {
 					break;
 				case KeyEvent.VK_UP:
 					if (yBase > 0) {
+						yBase -= increment;
 						yBase = yBase < 0 ? 0 : yBase;
-						yLim = yBase + largeur - 1;
+						yLim = yBase + hauteur - 1;
 						if (ecran == null || g == null) return;
 						synchronized (g) {
 							g.copyArea(0, 0, largeur, hauteur - increment, 0, increment);

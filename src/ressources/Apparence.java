@@ -1,5 +1,6 @@
 package ressources;
 
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +47,10 @@ public class Apparence {
 		if (largeur != 128 || hauteur != 192)
 			throw new InputMismatchException("Les dimensions de l'image " +
 					fichier + " sont incorrectes");
-		for (int j = 0; j < 4; j++) for (int i = 0; i < 4; i++)
-			images[i][j] = ressource.getSubimage(32 * i, 48 * j, 32, 48);
+		for (int j = 0; j < 4; j++) for (int i = 0; i < 4; i++) {
+			images[i][j] = Ressources.getConfig().createCompatibleImage(32, 48, Transparency.TRANSLUCENT);
+			images[i][j].createGraphics().drawImage(ressource.getSubimage(32 * i, 48 * j, 32, 48), 0, 0, null);
+		}
 	}
 	
 	/**

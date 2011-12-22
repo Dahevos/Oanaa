@@ -1,5 +1,6 @@
 package modele;
 import java.awt.Graphics;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import javax.imageio.ImageIO;
 import affichage.Camera;
 
 import ressources.Element;
+import ressources.Ressources;
 
 public class Carte implements Serializable {
 	private static final long serialVersionUID = 42L;
@@ -141,8 +143,8 @@ public class Carte implements Serializable {
 	}
 	
 	public void exporterImage(File fichier, String type) throws IOException {
-		BufferedImage image = new BufferedImage(32 * largeur, 32 * hauteur,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = Ressources.getConfig().createCompatibleImage(
+				32 * largeur, 32 * hauteur, Transparency.TRANSLUCENT);
 		dessiner(image.getGraphics(), 0, 0, 0, 0, 32 * largeur, 32 * hauteur);
 		ImageIO.write(image, type, fichier);
 	}

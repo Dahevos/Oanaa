@@ -36,6 +36,8 @@ public class Client extends JFrame {
 	private Ecran ecran;
 
 	public Client() throws IOException {
+		Ressources.setConfig(getGraphicsConfiguration());
+		
 		long debut = System.currentTimeMillis();
 		/*
 		ressources.Theme theme = Ressources.getTheme("tileset.png");
