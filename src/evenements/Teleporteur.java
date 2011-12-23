@@ -20,7 +20,7 @@ public class Teleporteur implements ActionSol {
 		return destination;
 	}
 	
-	public void setDest(Case destination) {
+	public void setDestination(Case destination) {
 		this.destination = destination;
 	}
 	

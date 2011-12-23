@@ -19,6 +19,7 @@ import modele.Joueur;
 import modele.PNJ;
 
 import evenements.Teleporteur;
+import evenements.Transformateur;
 
 import affichage.CameraFantome;
 import affichage.CameraFixe;
@@ -67,15 +68,18 @@ public class Client extends JFrame {
 		System.out.println("Fin lecture (" + (System.currentTimeMillis() - debut) + ") : " + getMemoire());
 		//*/
 
-		carte1.getCase(0, 0).ajouterActionSol(new Teleporteur(carte2.getCase(10, 10)));
-		carte2.getCase(0, 0).ajouterActionSol(new Teleporteur(carte1.getCase(10, 10)));
+		carte1.getCase(0, 0).ajouterActionSol(new Teleporteur(carte2.getCase(3, 3)));
+		carte2.getCase(0, 0).ajouterActionSol(new Teleporteur(carte1.getCase(3, 3)));
+		
+		carte1.getCase(0, 3).ajouterActionSol(new Transformateur(Ressources.getApparence("charset.png")));
+		carte1.getCase(3, 0).ajouterActionSol(new Transformateur(Ressources.getApparence("charset3.png")));
 
-		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 3);
-		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 5, 5);
+		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 2);
+		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 2, 3);
 
 		//*
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
-			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 5 + i, 20 + j, 100, 1000);
+			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 6 + i, 6 + j, 100, 1000);
 		//*/
 
 		ecran1 = new Ecran();

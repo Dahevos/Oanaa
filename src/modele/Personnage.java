@@ -7,7 +7,7 @@ import ressources.Apparence;
 
 
 public abstract class Personnage {
-	private final Apparence apparence;
+	private Apparence apparence;
 	private Carte carte = null;
 	private int i = -1, j = -1;
 	private int x = -1, y = -1;
@@ -19,10 +19,24 @@ public abstract class Personnage {
 	public Personnage(Apparence apparence) {
 		this.apparence = apparence;
 	}
+	
+	public Personnage(Apparence apparence, Carte carte, int i, int j, Direction dir) {
+		this(apparence);
+		setCarte(carte, i, j, dir);
+	}
 
 	public Personnage(Apparence apparence, Carte carte, int i, int j) {
-		this(apparence);
-		setCarte(carte, i, j);
+		this(apparence, carte, i, j, Direction.BAS);
+	}
+	
+	public Apparence getApparence() {
+		return apparence;
+	}
+	
+	public void setApparence(Apparence apparence) {
+		if (this.apparence == apparence) return;
+		this.apparence = apparence;
+		if (carte != null) carte.rafraichir(i, j - 1, i, j);
 	}
 	
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
@@ -52,8 +66,12 @@ public abstract class Personnage {
 	public int getY() {
 		return y;
 	}
-
+	
 	public boolean setCarte(Carte carte, int i, int j) {
+		return setCarte(carte, i, j, this.dir);
+	}
+
+	public boolean setCarte(Carte carte, int i, int j, Direction dir) {
 		// Vérification de la validité
 		if (carte == null || ! carte.existe(i, j)) return false;
 
@@ -74,7 +92,7 @@ public abstract class Personnage {
 		x = 32 * i;
 		this.j = j;
 		y = 32 * j - 16;
-		dir = Direction.BAS;
+		this.dir = dir;
 		instant = 0;
 		carte.getCase(i, j).setPerso(this);
 		carte.rafraichir(i, j - 1, i, j);
