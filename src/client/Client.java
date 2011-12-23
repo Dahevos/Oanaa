@@ -1,14 +1,17 @@
 package client;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.UIManager;
 
 import modele.Carte;
@@ -28,12 +31,12 @@ import ressources.Ressources;
 public class Client extends JFrame {
 
 	private Carte carte1, carte2;
-	private CameraFixe cameraFixe;
 	private Joueur joueur1, joueur2;
 	private PNJ pnj;
+	private CameraFixe cameraFixe;
 	private CameraPerso cameraPerso;
 	private CameraFantome cameraFantome;
-	private Ecran ecran;
+	private Ecran ecran1, ecran2, ecran3, ecran4, ecranParam;
 
 	public Client() throws IOException {
 		Ressources.setConfig(getGraphicsConfiguration());
@@ -65,6 +68,7 @@ public class Client extends JFrame {
 		//*/
 
 		carte1.getCase(0, 0).ajouterActionSol(new Teleporteur(carte2.getCase(10, 10)));
+		carte2.getCase(0, 0).ajouterActionSol(new Teleporteur(carte1.getCase(10, 10)));
 
 		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 3);
 		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 5, 5);
@@ -74,62 +78,117 @@ public class Client extends JFrame {
 			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 5 + i, 20 + j, 100, 1000);
 		//*/
 
-		ecran = new Ecran();
-		ecran.addKeyListener(joueur1);
+		ecran1 = new Ecran();
+		ecran2 = new Ecran();
+		ecran3 = new Ecran();
+		ecran4 = new Ecran();
 		
-		cameraFixe = new CameraFixe(carte1);
-		cameraPerso = new CameraPerso(joueur1, ecran);
-		cameraFantome = new CameraFantome(carte1);
+		setFocusable(true);
+		addKeyListener(joueur1);
+		
+		cameraFixe = new CameraFixe(carte2, ecran2);
+		cameraPerso = new CameraPerso(joueur1, ecran1);
+		cameraFantome = new CameraFantome(carte1, ecran3);
+		addKeyListener(cameraFantome);
 
 		JMenuBar menubar = new JMenuBar();
-
-		JMenu vue = new JMenu("Vue");
-		menubar.add(vue);
-		vue.add(new JMenuItem(new AbstractAction("Joueur 1") {
+		JMenu choixEcran = new JMenu("Choix écran");
+		menubar.add(choixEcran);
+		ButtonGroup groupe = new ButtonGroup();
+		
+		JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new AbstractAction("Ecran 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				ecranParam = ecran1;
+			}
+		});
+		radio.doClick();
+		groupe.add(radio);
+		choixEcran.add(radio);
+		
+		radio = new JRadioButtonMenuItem(new AbstractAction("Ecran 2") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecranParam = ecran2;
+			}
+		});
+		groupe.add(radio);
+		choixEcran.add(radio);
+		
+		radio = new JRadioButtonMenuItem(new AbstractAction("Ecran 3") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecranParam = ecran3;
+			}
+		});
+		groupe.add(radio);
+		choixEcran.add(radio);
+		
+		radio = new JRadioButtonMenuItem(new AbstractAction("Ecran 4") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ecranParam = ecran4;
+			}
+		});
+		groupe.add(radio);
+		choixEcran.add(radio);
+		
+		
+		JMenu choixCamera = new JMenu("Caméra");
+		menubar.add(choixCamera);
+		choixCamera.add(new JMenuItem(new AbstractAction("Joueur 1") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(joueur1);
-				ecran.setCamera(cameraPerso);
+				ecranParam.setCamera(cameraPerso);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Joueur 2") {
+		choixCamera.add(new JMenuItem(new AbstractAction("Joueur 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(joueur2);
-				ecran.setCamera(cameraPerso);
+				ecranParam.setCamera(cameraPerso);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("PNJ") {
+		choixCamera.add(new JMenuItem(new AbstractAction("PNJ") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(pnj);
-				ecran.setCamera(cameraPerso);
+				ecranParam.setCamera(cameraPerso);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Carte 1") {
+		choixCamera.add(new JMenuItem(new AbstractAction("Carte 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				removeKeyListener(cameraFantome);
 				cameraFixe.setCarte(carte1);
-				ecran.setCamera(cameraFixe);
+				ecranParam.setCamera(cameraFixe);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Carte 2") {
+		choixCamera.add(new JMenuItem(new AbstractAction("Carte 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				removeKeyListener(cameraFantome);
 				cameraFixe.setCarte(carte2);
-				ecran.setCamera(cameraFixe);
+				ecranParam.setCamera(cameraFixe);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Fantome") {
+		choixCamera.add(new JMenuItem(new AbstractAction("Fantome") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCamera(cameraFantome);
+				removeKeyListener(cameraFantome);
+				ecranParam.setCamera(cameraFantome);
+				addKeyListener(cameraFantome);
 			}
 		}));
-		vue.add(new JMenuItem(new AbstractAction("Rien") {
+		choixCamera.add(new JMenuItem(new AbstractAction("Rien") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.setCamera(null);
+				removeKeyListener(cameraFantome);
+				ecranParam.setCamera(null);
 			}
 		}));
 
@@ -138,24 +197,24 @@ public class Client extends JFrame {
 		controle.add(new JMenuItem(new AbstractAction("Joueur 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.removeKeyListener(joueur1);
-				ecran.removeKeyListener(joueur2);
-				ecran.addKeyListener(joueur1);
+				removeKeyListener(joueur1);
+				removeKeyListener(joueur2);
+				addKeyListener(joueur1);
 			}
 		}));
 		controle.add(new JMenuItem(new AbstractAction("Joueur 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.removeKeyListener(joueur1);
-				ecran.removeKeyListener(joueur2);
-				ecran.addKeyListener(joueur2);
+				removeKeyListener(joueur1);
+				removeKeyListener(joueur2);
+				addKeyListener(joueur2);
 			}
 		}));
 		controle.add(new JMenuItem(new AbstractAction("Rien") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ecran.removeKeyListener(joueur1);
-				ecran.removeKeyListener(joueur2);
+				removeKeyListener(joueur1);
+				removeKeyListener(joueur2);
 			}
 		}));
 
@@ -176,8 +235,13 @@ public class Client extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(menubar);
-		setContentPane(ecran);
-		setSize(400, 400);
+		
+		setLayout(new GridLayout(2, 2, 5, 5));
+		add(ecran1);
+		add(ecran2);
+		add(ecran3);
+		add(ecran4);
+		setExtendedState(MAXIMIZED_BOTH);
 
 		System.out.println("Avant nettoyage : " + getMemoire());
 		Ressources.nettoyerThemes();

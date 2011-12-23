@@ -72,6 +72,7 @@ public class Carte implements Serializable {
 	}
 
 	public void rafraichir(int iMin, int jMin, int iMax, int jMax) {
+		System.out.println("Carte.rafraichir(" + iMin + ", " + jMin + ", " + iMax + ", " + jMax + ")");
 		for (Camera camera : cameras) {
 			camera.rafraichir(32 * iMin, 32 * jMin, 32 * iMax + 31, 32 * jMax + 31);
 		}

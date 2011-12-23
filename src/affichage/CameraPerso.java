@@ -28,7 +28,9 @@ public class CameraPerso extends Camera {
 
 	public void setPerso(Personnage perso) {
 		if (this.perso == perso) return;
-		if (this.perso != null) this.perso.retirerEcouteur(ecouteur);
+		if (this.perso != null) {
+			this.perso.retirerEcouteur(ecouteur);
+		}
 		this.perso = perso;
 		if (perso != null) {
 			perso.ajouterEcouteur(ecouteur);
@@ -68,7 +70,7 @@ public class CameraPerso extends Camera {
 		}
 
 		@Override
-		synchronized public void persoBouge(Personnage perso, Direction dir) {
+		public void persoBouge(Personnage perso, Direction dir) {
 			synchronized (CameraPerso.this) {
 				recalculerBase();
 

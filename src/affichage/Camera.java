@@ -135,6 +135,7 @@ public abstract class Camera {
 	 * @param hauteur hauteur de la zone
 	 */
 	synchronized protected void redessiner(int xMin, int yMin, int largeur, int hauteur) {
+		System.out.println("Caméra.rafraichir(" + xMin + ", " + yMin + ", " + largeur + ", " + hauteur + ")");
 		if (ecran == null || g == null) return;
 		synchronized (g) {
 			if (carte != null)
@@ -154,6 +155,7 @@ public abstract class Camera {
 	 * @param yMax ordonnée du dernier pixel
 	 */
 	synchronized public void rafraichir(int xMin, int yMin, int xMax, int yMax) {
+		System.out.println("Caméra.rafraichir(" + xMin + ", " + yMin + ", " + xMax + ", " + yMax + ")");
 		if (ecran == null) return;
 
 		xMin = xMin < xBase ? xBase : xMin;

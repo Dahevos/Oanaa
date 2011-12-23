@@ -15,22 +15,16 @@ public abstract class Personnage {
 	private int instant;
 	private Thread deplacement = null;
 	private final ArrayList<EcouteurPerso> ecouteurs = new ArrayList<EcouteurPerso>();
-	private boolean auto;
 
 	public Personnage(Apparence apparence) {
 		this.apparence = apparence;
 	}
 
-	public Personnage(Apparence apparence, Carte carte, int i, int j, boolean auto) {
+	public Personnage(Apparence apparence, Carte carte, int i, int j) {
 		this(apparence);
 		setCarte(carte, i, j);
-		this.auto = auto;
 	}
 	
-	public Personnage(Apparence apparence, Carte carte, int i, int j) {
-		this(apparence, carte, i, j, true);
-	}
-
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.add(ecouteur);
 	}
@@ -58,14 +52,6 @@ public abstract class Personnage {
 	public int getY() {
 		return y;
 	}
-	
-	public boolean isAuto() {
-		return auto;
-	}
-	
-	public void setAuto(boolean auto) {
-		this.auto = auto;
-	}
 
 	public boolean setCarte(Carte carte, int i, int j) {
 		// Vérification de la validité
@@ -79,6 +65,7 @@ public abstract class Personnage {
 			Case c = this.carte.getCase(this.i, this.j);
 			c.setPerso(null);
 			c.liberer();
+			this.carte.rafraichir(this.i, this.j - 1, this.i, this.j);
 		}
 
 		// Mise en place de la nouvelle position
@@ -90,6 +77,9 @@ public abstract class Personnage {
 		dir = Direction.BAS;
 		instant = 0;
 		carte.getCase(i, j).setPerso(this);
+		carte.rafraichir(i, j - 1, i, j);
+		
+		// Signalement du changement de carte
 		for (EcouteurPerso ecouteur : ecouteurs) {
 			ecouteur.carteChangee(this, carte);
 		}
@@ -176,11 +166,13 @@ public abstract class Personnage {
 				y += dy;
 				instant = k % 4;
 
+				// Signalement du déplacement
 				for (EcouteurPerso ecouteur : ecouteurs) {
 					ecouteur.persoBouge(Personnage.this, dir);
 				}
+
 				// Mise à jour de la carte
-				if (auto) switch(dir) {
+				switch(dir) {
 				case BAS: carte.rafraichir(i, j - 1, i, j + 1); break;
 				case GAUCHE: carte.rafraichir(i - 1, j - 1, i, j); break;
 				case DROITE: carte.rafraichir(i, j - 1, i + 1, j); break;
