@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -135,8 +136,13 @@ public class Editeur extends JFrame{
 		vue.add(new JMenuItem(new AbstractAction("Nouvelle carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				edition = new Carte(200, 200, Ressources.getElement("tileset.png", 0, 0));
-				camera.setCarte(edition);
+				DChoisirCarte choisirCarte = new DChoisirCarte(Editeur.this, "Taille de la carte", true); 
+				ArrayList<Integer> val = choisirCarte.getValCarte();
+				if (val.size() == 2) {
+					edition = new Carte(val.get(0), val.get(1), Ressources.getElement("tileset.png", 0, 0));
+					camera.setCarte(edition);
+					droite.repaint();
+				}
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
@@ -211,11 +217,14 @@ public class Editeur extends JFrame{
 			dessine = true;
 			int i = e.getX() / 32;
 			int j = e.getY() / 32;
-			for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
-				for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
-					edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
-					edition.rafraichir(i + ligne, j + colonne, 32, 32);
-				}
+			if (i < edition.getLargeur() && j < edition.getHauteur()) {
+				for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
+					for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
+						edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
+						edition.rafraichir(i + ligne, j + colonne, 32, 32);
+
+					}
+			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -224,7 +233,6 @@ public class Editeur extends JFrame{
 
 		public void mouseMoved(MouseEvent e) {
 			if(dessine) {
-				System.out.println("lol");
 				int i = e.getX() / 32;
 				int j = e.getY() / 32;
 				for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
