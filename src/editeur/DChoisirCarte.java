@@ -80,12 +80,12 @@ public class DChoisirCarte extends JDialog {
 
 				}
 				else {
-					
+
 					try {
-					mapInfo = new ArrayList<Integer>();
-					mapInfo.add((Integer.parseInt(x.getText())));
-					mapInfo.add((Integer.parseInt(y.getText())));
-					setVisible(false);
+						mapInfo = new ArrayList<Integer>();
+						mapInfo.add((Integer.parseInt(x.getText())));
+						mapInfo.add((Integer.parseInt(y.getText())));
+						setVisible(false);
 					}
 					catch (Exception e){
 						JOptionPane.showMessageDialog(null, "Vous devez spécifier des entiers !", "Attention", JOptionPane.WARNING_MESSAGE);

@@ -1,7 +1,6 @@
 package editeur;
 
 
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -92,37 +92,63 @@ public class Editeur extends JFrame{
 
 	/**
 	 * Afficher une boite de dialogue "ouvrir un fichier"
-	 * @param _title Title de la boite de dialogue
-	 * @param _path Répertoire initiale
-	 * @param _fileFilter Filtre de type *.jpg
-	 * @return repertoire"/"nom du fichier
+	 * Utilise la class privée MyFilter comme filtre
 	 */
-	public String LoadFromFile(String _title, String _path, String _fileFilter) {
-		FileDialog fileDialog = new FileDialog(this, _title, FileDialog.LOAD);
-		fileDialog.setFile(_fileFilter);
-		fileDialog.setDirectory(_path);
-		this.setLocationRelativeTo(null);
-		fileDialog.setDirectory(_path);
-		fileDialog.setVisible(true);
-		return fileDialog.getDirectory() + fileDialog.getFile();
+	public File LoadFromFile() {
+		String filename = File.separator+"tmp";
+		JFileChooser fc = new JFileChooser(new File(filename));
+		try {
+		    // Create a File object containing the canonical path of the
+		    // desired directory
+		    File f = new File(new File(".").getCanonicalPath());
+		    // Set the current directory
+		    fc.setCurrentDirectory(f);
+		} catch (IOException e) {
+		}
+		fc.addChoosableFileFilter(new MyFilter());
+
+		// Show open dialog; this method does not return until the dialog is closed
+		fc.showOpenDialog(this);
+		File selFile = fc.getSelectedFile();
+		return selFile;
+
 	}
 
-
+	private class MyFilter extends javax.swing.filechooser.FileFilter {
+		public boolean accept(File file) {
+			if (file.isDirectory()) { return true; }
+			String filename = file.getName();
+			return filename.endsWith(".dat");
+		}
+		public String getDescription() {
+			return "*.dat";
+		}
+	}
+	
+	
+	
 	/**
 	 * Afficher une boite de dialogue "Enregistrer un fichier"
-	 * @param _title Title de la boite de dialogue
-	 * @param _path Répertoire initiale
-	 * @param _fileFilter Filtre de type *.jpg
-	 * @return repertoire"/"nom du fichier
 	 */
-	public String SaveFromFile(String _title, String _path, String _fileFilter) {
-		FileDialog fileDialog = new FileDialog(this, _title, FileDialog.SAVE);
-		fileDialog.setFile(_fileFilter);
-		fileDialog.setDirectory(_path);
-		this.setLocationRelativeTo(null);
-		fileDialog.setDirectory(_path);
-		fileDialog.setVisible(true);
-		return fileDialog.getDirectory() + fileDialog.getFile();
+	public File SaveFromFile() {
+		String filename = File.separator+"tmp";
+		JFileChooser fc = new JFileChooser(new File(filename));
+		try {
+		    // Create a File object containing the canonical path of the
+		    // desired directory
+		    File f = new File(new File(".").getCanonicalPath());
+		    // Set the current directory
+		    fc.setCurrentDirectory(f);
+		} catch (IOException e) {
+		}
+		fc.addChoosableFileFilter(new MyFilter());
+		// Show save dialog; this method does not return until the dialog is closed
+		fc.showSaveDialog(this);
+		File selFile = fc.getSelectedFile();
+		if(!selFile.getName().contains(".dat"))
+			selFile = new File(selFile.getAbsoluteFile() + ".dat");
+		
+		return selFile;
 	}
 
 	public void initMenu() {
@@ -148,18 +174,19 @@ public class Editeur extends JFrame{
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// récupération du fichier sélectionné			        
-				edition = Carte.lire(new File(LoadFromFile("Charger une carte", ".\\", "*.dat")));
-				camera.setCarte(edition);
-				//edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
-				//droite.repaint();
+				// récupération du fichier sélectionné		
+				File f = LoadFromFile();
+				if (f != null)  {
+					edition = Carte.lire(f);
+					camera.setCarte(edition);
+				}
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Enregistrer carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
-				edition.ecrire(SaveFromFile("Enregistrer une carte",".\\", "*.dat"));
+				edition.ecrire(SaveFromFile());
 			}
 		}));
 		vue.addSeparator();
