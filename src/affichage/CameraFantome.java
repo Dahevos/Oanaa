@@ -1,10 +1,10 @@
 package affichage;
 
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import modele.Carte;
+import modele.Direction;
 
 public class CameraFantome extends Camera implements KeyListener {
 	private int xBaseMax = 0, yBaseMax = 0;
@@ -16,15 +16,6 @@ public class CameraFantome extends Camera implements KeyListener {
 		setCarte(carte);
 	}
 
-	public CameraFantome(Ecran ecran) {
-		setEcran(ecran);
-	}
-
-	public CameraFantome(Carte carte, Ecran ecran) {
-		setCarte(carte);
-		setEcran(ecran);
-	}
-
 	public CameraFantome(int increment) {
 		this.increment = increment;
 	}
@@ -34,21 +25,8 @@ public class CameraFantome extends Camera implements KeyListener {
 		this.increment = increment;
 	}
 
-	public CameraFantome(Ecran ecran, int increment) {
-		setEcran(ecran);
-		this.increment = increment;
-	}
-
-	public CameraFantome(Carte carte, Ecran ecran, int increment) {
-		setCarte(carte);
-		setEcran(ecran);
-		this.increment = increment;
-	}
-
 	public void setCarte(Carte carte) {
 		super.setCarte(carte);
-		xBase = 0;
-		yBase = 0;
 		recalculerBaseMax();
 	}
 
@@ -61,10 +39,11 @@ public class CameraFantome extends Camera implements KeyListener {
 	}
 
 	synchronized private void recalculerBaseMax() {
-		recalculerBaseMax(largeur, hauteur);
+		recalculerBaseMax(getLargeur(), getHauteur());
 	}
 
 	synchronized private void recalculerBaseMax(int largeur, int hauteur) {
+		final Carte carte = getCarte();
 		if (carte != null) {
 			xBaseMax = carte.getLargeur() * 32 - largeur;
 			yBaseMax = carte.getHauteur() * 32 - hauteur;
@@ -75,63 +54,43 @@ public class CameraFantome extends Camera implements KeyListener {
 	}
 
 	@Override
-	synchronized void redimensionner(int largeur, int hauteur, Graphics g) {
+	synchronized public void redimensionner(int largeur, int hauteur) {
 		recalculerBaseMax(largeur, hauteur);
-		super.redimensionner(largeur, hauteur, g);
+		super.redimensionner(largeur, hauteur);
 	}
 
 	synchronized public void keyPressed(KeyEvent e) {
+		Direction dir;
+		int incrementMax;
+		
+		// Analyse de la touche
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_DOWN:
-			if (yBase < yBaseMax) {
-				yBase += increment;
-				yBase = yBase > yBaseMax ? yBaseMax : yBase;
-				yLim = yBase + hauteur - 1;
-				if (ecran == null || g == null) return;
-				synchronized (g) {
-					g.copyArea(0, increment, largeur, hauteur - increment, 0, -increment);
-					carte.dessiner(g, xBase, yBase, xBase, yBase + hauteur - increment, largeur, increment);	
-				}
-			}
+			dir = Direction.BAS;
+			incrementMax = yBaseMax - getyBase();
 			break;
 		case KeyEvent.VK_LEFT:
-			if (xBase > 0) {
-				xBase -= increment;
-				xBase = xBase < 0 ? 0 : xBase;
-				xLim = xBase + largeur - 1;
-				if (ecran == null || g == null) return;
-				synchronized (g) {
-					g.copyArea(0, 0, largeur - increment, hauteur, increment, 0);
-					carte.dessiner(g, xBase, yBase, xBase, yBase, increment, hauteur);
-				}
-			}
+			dir = Direction.GAUCHE;
+			incrementMax = getxBase();
 			break;
 		case KeyEvent.VK_RIGHT:
-			if (xBase < xBaseMax) {
-				xBase += increment;
-				xBase = xBase > xBaseMax ? xBaseMax : xBase;
-				xLim = xBase + largeur - 1;
-				if (ecran == null || g == null) return;
-				synchronized (g) {
-					g.copyArea(increment, 0, largeur - increment, hauteur, -increment, 0);
-					carte.dessiner(g, xBase, yBase, xBase + largeur - increment, yBase, increment, hauteur);
-				}
-			}
+			dir = Direction.DROITE;
+			incrementMax = xBaseMax - getxBase();
 			break;
 		case KeyEvent.VK_UP:
-			if (yBase > 0) {
-				yBase -= increment;
-				yBase = yBase < 0 ? 0 : yBase;
-				yLim = yBase + hauteur - 1;
-				if (ecran == null || g == null) return;
-				synchronized (g) {
-					g.copyArea(0, 0, largeur, hauteur - increment, 0, increment);
-					carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, increment);
-				}
-			}
+			dir = Direction.HAUT;
+			incrementMax = getyBase();
 			break;
+		default: return;
 		}
-		ecran.repaint();
+		
+		// Déplacement de la caméra
+		deplacer(dir, increment > incrementMax ? incrementMax : increment);
+		
+		// Notification des écrans
+		for (Ecran ecran : getEcrans()) {
+			ecran.repaint();
+		}
 	}
 
 	@Override

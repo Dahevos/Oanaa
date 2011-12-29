@@ -1,10 +1,7 @@
 package affichage;
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
@@ -22,34 +19,36 @@ public class Ecran extends JPanel {
 	private Camera camera = null;
 	
 	/**
-	 * Image "OffScreen", contenant la scène
-	 */
-	private BufferedImage image = null;
-	
-	/**
-	 * Objet utilisé pour dessiner dans l'offscreen
-	 */
-	private Graphics g = null;
-
-	/**
-	 * Construit un nouvel écran, prêt à être attaché à une caméra.
+	 * Construit un nouvel écran attaché à aucune caméra.
 	 */
 	public Ecran() {
-		redimensionner();
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				redimensionner();
+				adapterCamera();
 				super.componentResized(e);
 			}
 		});
 		setFocusable(true);
 	}
+	
+	/**
+	 * Construit un nouvel écran attaché à la caméra <code>camera</code>.
+	 * @param camera caméra à utiliser
+	 */
+	public Ecran(Camera camera) {
+		this();
+		setCamera(camera);
+	}
 
 	/**
 	 * Attache cet écran à la caméra <code>camera</code>.
-	 * <p>Cette méthode est fortement liée à la méthode <code>setEcran()</code> de la classe
-	 * <code>Camera</code>.
+	 * <br>Remarque : cette méthode adapte automatiquement la caméra à cet écran.
+	 * Si plusieurs écrans sont attachés à la même caméra, c'est le dernier qui imposera donc
+	 * sa taille à celle-ci. Pour corriger ceci, méthode <code>adapterCamera()</code> permet de forcer la caméra
+	 * à se ré-adapter à cet écran.
+	 * <br>Pour mieux contrôler la taille de la caméra, il est également possible d'utiliser
+	 * la méthode <code>redimensionner()</code> de la classe caméra.
 	 * @param camera caméra à rattacher à cet écran
 	 */
 	public void setCamera(Camera camera) {
@@ -57,25 +56,18 @@ public class Ecran extends JPanel {
 		if (this.camera != null) {
 			Camera cameraPrec = this.camera;
 			this.camera = null;
-			cameraPrec.setEcran(null);
+			cameraPrec.retirerEcran(this);
 		}
 		this.camera = camera;
-		if (camera != null) camera.setEcran(this);
+		if (camera != null) camera.ajouterEcran(this);
 		adapterCamera();
 	}
 	
 	/**
-	 * Paramètre la caméra de cet écran pour afficher correctement ses données dans celui-ci.
-	 * Cela permet de transmettre les dimensions de l'écran ainsi que l'objet de dessin.
+	 * Redimensionne la caméra de cet écran pour s'y adapter parfaitement.
 	 */
 	private void adapterCamera() {
-		if (camera != null) {
-			camera.redimensionner(getWidth(), getHeight(), g);
-		} else if (g != null) {
-			synchronized (g) {
-				g.fillRect(0, 0, getWidth(), getHeight());
-			}
-		}
+		if (camera != null) camera.redimensionner(getWidth(), getHeight());
 		repaint();
 	}
 
@@ -87,30 +79,9 @@ public class Ecran extends JPanel {
 		return camera;
 	}
 
-	/**
-	 * Redimensionne l'offscreen et ré-adapte la caméra.
-	 */
-	private void redimensionner() {
-		final int largeur = getWidth();
-		final int hauteur = getHeight();
-
-		if (largeur > 0 && hauteur > 0) {
-			// Transparency.OPAQUE provoque des bug... Pourquoi ?
-			image = getGraphicsConfiguration().createCompatibleImage(largeur, hauteur, Transparency.TRANSLUCENT);
-			g = image.createGraphics();
-			g.setColor(Color.BLACK);
-			adapterCamera();
-		} else {
-			image = null;
-			g = null;
-		}
-	}
-
 	@Override
 	protected void paintComponent(Graphics g) {
-		if (image == null || this.g == null) super.paintComponent(g);
-		else synchronized (this.g) {
-			g.drawImage(image, 0, 0, null);
-		}
+		if (camera == null) super.paintComponent(g);
+		else camera.dessiner(g);
 	}
 }

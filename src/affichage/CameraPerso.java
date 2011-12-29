@@ -1,7 +1,5 @@
 package affichage;
 
-import java.awt.Graphics;
-
 import modele.Carte;
 import modele.Direction;
 import modele.EcouteurPerso;
@@ -17,15 +15,6 @@ public class CameraPerso extends Camera {
 		setPerso(perso);
 	}
 
-	public CameraPerso(Ecran ecran) {
-		setEcran(ecran);
-	}
-
-	public CameraPerso(Personnage perso, Ecran ecran) {
-		setPerso(perso);
-		setEcran(ecran);
-	}
-
 	public void setPerso(Personnage perso) {
 		if (this.perso == perso) return;
 		if (this.perso != null) {
@@ -39,69 +28,61 @@ public class CameraPerso extends Camera {
 		} else {
 			super.setCarte(null);
 		}
-		redessiner();
+		rafraichir();
 	}
 
 	synchronized private void recalculerBase(int largeur, int hauteur) {
 		if (perso == null) return;
-		xBase = perso.getX() - largeur / 2 + 16;
-		xLim = xBase + largeur - 1;
-		yBase = perso.getY() - hauteur / 2 + 24;
-		yLim = yBase + hauteur - 1;
+		setBase(perso.getX() - largeur / 2 + 16, perso.getY() - hauteur / 2 + 24);
 	}
 
 	synchronized private void recalculerBase() {
-		recalculerBase(largeur, hauteur);
+		recalculerBase(getLargeur(), getHauteur());
 	}
 
 	@Override
-	synchronized void redimensionner(int largeur, int hauteur, Graphics g) {
+	synchronized public void redimensionner(int largeur, int hauteur) {
 		recalculerBase(largeur, hauteur);
-		super.redimensionner(largeur, hauteur, g);
+		super.redimensionner(largeur, hauteur);
 	}
-	
+
 	private class Ecouteur implements EcouteurPerso {
 		@Override
 		public void carteChangee(Personnage perso, Carte carte) {
 			synchronized (CameraPerso.this) {
+				CameraPerso.super.setCarte(carte);
 				recalculerBase();
-				CameraPerso.super.setCarte(carte);	
+				rafraichir();
 			}
 		}
 
 		@Override
 		public void persoBouge(Personnage perso, Direction dir) {
 			synchronized (CameraPerso.this) {
-				recalculerBase();
+				// Déplacement de la caméra
+				deplacer(dir, 8);
 
-				if (ecran == null || g == null) return;
-
-				synchronized (g) {
-					switch (dir) {
-					case BAS:
-						g.copyArea(0, 8, largeur, hauteur - 8, 0, -8);
-						carte.dessiner(g, xBase, yBase, xBase, yBase + hauteur - 8, largeur, 8);
-						carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY() - 8, 32, 56);
-						break;
-					case GAUCHE:
-						g.copyArea(0, 0, largeur - 8, hauteur, 8, 0);
-						carte.dessiner(g, xBase, yBase, xBase, yBase, 8, hauteur);
-						carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY(), 40, 48);
-						break;
-					case DROITE:
-						g.copyArea(8, 0, largeur - 8, hauteur, -8, 0);
-						carte.dessiner(g, xBase, yBase, xBase + largeur - 8, yBase, 8, hauteur);
-						carte.dessiner(g, xBase, yBase, perso.getX() - 8, perso.getY(), 40, 48);
-						break;
-					case HAUT:
-						g.copyArea(0, 0, largeur, hauteur - 8, 0, 8);
-						carte.dessiner(g, xBase, yBase, xBase, yBase, largeur, 8);
-						carte.dessiner(g, xBase, yBase, perso.getX(), perso.getY(), 32, 56);
-						break;
-					}	
+				// Mise à jour de la zone du personnage
+				switch (dir) {
+				case BAS:
+					redessiner(perso.getI(), perso.getJ() - 1, perso.getI(), perso.getJ() + 1);
+					break;
+				case GAUCHE:
+					redessiner(perso.getI() - 1, perso.getJ() - 1, perso.getI(), perso.getJ());
+					break;
+				case DROITE:
+					redessiner(perso.getI(), perso.getJ() - 1, perso.getI() + 1, perso.getJ());
+					break;
+				case HAUT:
+					redessiner(perso.getI(), perso.getJ() - 2, perso.getI(), perso.getJ());
+					break;
 				}
 			}
-			ecran.repaint();
+
+			// Notification des écrans
+			for (Ecran ecran : getEcrans()) {
+				ecran.repaint();
+			}
 		}
 	}
 }

@@ -82,18 +82,18 @@ public class Client extends JFrame {
 			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 6 + i, 6 + j, 100, 1000);
 		//*/
 
-		ecran1 = new Ecran();
-		ecran2 = new Ecran();
-		ecran3 = new Ecran();
-		ecran4 = new Ecran();
-		
 		setFocusable(true);
 		addKeyListener(joueur1);
 		
-		cameraFixe = new CameraFixe(carte2, ecran2);
-		cameraPerso = new CameraPerso(joueur1, ecran1);
-		cameraFantome = new CameraFantome(carte1, ecran3);
+		cameraFixe = new CameraFixe(carte2);
+		cameraPerso = new CameraPerso(joueur1);
+		cameraFantome = new CameraFantome(carte1);
 		addKeyListener(cameraFantome);
+
+		ecran1 = new Ecran(cameraPerso);
+		ecran2 = new Ecran(cameraFixe);
+		ecran3 = new Ecran(cameraFantome);
+		ecran4 = new Ecran(cameraPerso);
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");
@@ -143,7 +143,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Joueur 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(joueur1);
 				ecranParam.setCamera(cameraPerso);
 			}
@@ -151,7 +151,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Joueur 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(joueur2);
 				ecranParam.setCamera(cameraPerso);
 			}
@@ -159,7 +159,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("PNJ") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				cameraPerso.setPerso(pnj);
 				ecranParam.setCamera(cameraPerso);
 			}
@@ -167,7 +167,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Carte 1") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				cameraFixe.setCarte(carte1);
 				ecranParam.setCamera(cameraFixe);
 			}
@@ -175,7 +175,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Carte 2") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				cameraFixe.setCarte(carte2);
 				ecranParam.setCamera(cameraFixe);
 			}
@@ -183,7 +183,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Fantome") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) return;
 				ecranParam.setCamera(cameraFantome);
 				addKeyListener(cameraFantome);
 			}
@@ -191,7 +191,7 @@ public class Client extends JFrame {
 		choixCamera.add(new JMenuItem(new AbstractAction("Rien") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				removeKeyListener(cameraFantome);
+				if (ecranParam.getCamera() == cameraFantome) removeKeyListener(cameraFantome);
 				ecranParam.setCamera(null);
 			}
 		}));
@@ -238,6 +238,7 @@ public class Client extends JFrame {
 		//*/
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("Oanaa - Client");
 		setJMenuBar(menubar);
 		
 		setLayout(new GridLayout(2, 2, 5, 5));

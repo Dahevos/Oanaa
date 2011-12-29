@@ -65,8 +65,8 @@ public class Editeur extends JFrame{
 		//edition = Carte.lire(new File("carte.dat"));
 
 		/* contenu de droite (carte) */
-		ecran = new Ecran();
-		camera = new CameraFixe(edition, ecran);
+		camera = new CameraFixe(edition);
+		ecran = new Ecran(camera);
 		droite = new JScrollPane(ecran);
 		droite.getHorizontalScrollBar().setUnitIncrement(32);
 		droite.getHorizontalScrollBar().setBlockIncrement(32);
