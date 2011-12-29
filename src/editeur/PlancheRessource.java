@@ -67,7 +67,7 @@ public class PlancheRessource extends JPanel {
 
 
 	// Couleurs de la grille
-	private final static Color[] couleursGrille = new Color[] {Color.LIGHT_GRAY, Color.GRAY};
+	private final static Color[] couleursGrille = {Color.LIGHT_GRAY, Color.GRAY};
 
 	private void dessinerGrille(Graphics g) {
 		// Calcul de la zone à dessiner

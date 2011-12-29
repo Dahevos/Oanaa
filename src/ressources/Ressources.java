@@ -1,9 +1,13 @@
 package ressources;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 /**
  * Classe permettant de centraliser la gestion des ressources.</br>
@@ -31,6 +35,11 @@ public class Ressources {
 	 * Sous-répertoire contenant les apparences.
 	 */
 	private static final String REP_APPARENCES = "apparences";
+	
+	/**
+	 * Sous-répertoire contenant les apparences.
+	 */
+	private static final String REP_MOTIFS = "motifs";
 
 	/**
 	 * Ensemble des thèmes déjà chargés.
@@ -41,6 +50,11 @@ public class Ressources {
 	 * Ensemble des apparences déjà chargées.
 	 */
 	private static final HashMap<String, Apparence> apparences = new HashMap<String, Apparence>();
+	
+	/**
+	 * Ensembles des motifs déjà chargés.
+	 */
+	private static final HashMap<String, BufferedImage> motifs = new HashMap<String, BufferedImage>();
 
 	/**
 	 * Constructeur par défaut (privé pour empêcher toute instanciation).
@@ -91,7 +105,8 @@ public class Ressources {
 		Theme theme = themes.get(nom);
 		if (theme == null) {
 			try {
-				theme = new Theme(nom, new File(emplacement + "/" + REP_THEMES + "/" + nom));
+				theme = new Theme(nom, new File(
+						emplacement + File.separatorChar + REP_THEMES + File.separatorChar + nom));
 			} catch (IOException e) {
 				System.err.println("Impossible de charger le thème " + nom);
 				theme = Theme.THEME_VIDE;
@@ -145,7 +160,8 @@ public class Ressources {
 		Apparence apparence = apparences.get(nom);
 		if (apparence == null) {
 			try {
-				apparence = new Apparence(new File(emplacement + "/" + REP_APPARENCES + "/" + nom));
+				apparence = new Apparence(new File(
+						emplacement + File.separatorChar + REP_APPARENCES + File.separatorChar + nom));
 			} catch (IOException e) {
 				System.err.println("Impossible de charger l'apparence " + nom);
 				apparence = Apparence.APPARENCE_DEFAUT;
@@ -154,7 +170,29 @@ public class Ressources {
 		}
 		return apparence;
 	}
-
+	
+	/**
+	 * Retourne le motif nommée <code>nom</code>, ou <code>null</code> s'il n'est pas disponible.
+	 * @param nom nom du motif
+	 * @return le motif nommée <code>nom</code>
+	 */
+	public static BufferedImage getMotif(String nom) {
+		BufferedImage motif = motifs.get("nom");
+		if (motif == null) {
+			try {
+				BufferedImage image = ImageIO.read(new File(
+						emplacement + File.separatorChar + REP_MOTIFS + File.separatorChar + nom));
+				motif = config.createCompatibleImage(
+						image.getWidth(), image.getHeight(), Transparency.TRANSLUCENT);
+				motif.createGraphics().drawImage(image, 0, 0, null);
+			} catch (IOException e) {
+				System.err.println("Impossible de charger le motif " + nom);
+				motif = null;
+			}
+		}
+		return motif;
+	}
+	
 	public static void nettoyerThemes() {
 		for (Theme theme : themes.values()) {
 			theme.nettoyer();

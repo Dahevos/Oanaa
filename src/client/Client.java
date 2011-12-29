@@ -1,4 +1,5 @@
 package client;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -25,6 +26,8 @@ import affichage.CameraFantome;
 import affichage.CameraFixe;
 import affichage.CameraPerso;
 import affichage.Ecran;
+import affichage.FiltreCouleur;
+import affichage.FiltreImage;
 
 import ressources.Ressources;
 
@@ -89,11 +92,14 @@ public class Client extends JFrame {
 		cameraPerso = new CameraPerso(joueur1);
 		cameraFantome = new CameraFantome(carte1);
 		addKeyListener(cameraFantome);
-
+		
 		ecran1 = new Ecran(cameraPerso);
 		ecran2 = new Ecran(cameraFixe);
 		ecran3 = new Ecran(cameraFantome);
 		ecran4 = new Ecran(cameraPerso);
+		
+		ecran2.ajouterFiltreDessus(new FiltreCouleur(new Color(255, 0, 0, 50)));
+		ecran4.ajouterFiltreDessus(new FiltreImage(Ressources.getMotif("fog1.png"), 0.3f));
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");

@@ -2,6 +2,7 @@ package affichage;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -17,6 +18,11 @@ public class Ecran extends JPanel {
 	 * Caméra associée à l'écran
 	 */
 	private Camera camera = null;
+	
+	/**
+	 * Liste des filtres associés à cet écran
+	 */
+	private final LinkedList<Filtre> filtres = new LinkedList<Filtre>();
 	
 	/**
 	 * Construit un nouvel écran attaché à aucune caméra.
@@ -78,10 +84,47 @@ public class Ecran extends JPanel {
 	public Camera getCamera() {
 		return camera;
 	}
+	
+	/**
+	 * Ajoute un filtre à cet écran, en dessous des autres.
+	 * @param filtre filtre à ajouter
+	 */
+	public void ajouterFiltreDessous(Filtre filtre) {
+		filtres.addFirst(filtre);
+		filtre.ajouterEcran(this);
+	}
+	
+	/**
+	 * Ajoute un filtre à cet écran, au dessus des autres.
+	 * @param filtre filtre à ajouter
+	 */
+	public void ajouterFiltreDessus(Filtre filtre) {
+		filtres.addLast(filtre);
+		filtre.ajouterEcran(this);
+	}
+	
+	/**
+	 * Retire un filtre de cet écran.
+	 * @param filtre filtre à retirer
+	 */
+	public void retirerFiltre(Filtre filtre) {
+		filtres.remove(filtre);
+	}
+	
+	/**
+	 * Retourne l'ensemble des filtres appliqués à cet écran.
+	 * @return l'ensemble des filtres appliqués à cet écran
+	 */
+	public LinkedList<Filtre> getFiltres() {
+		return filtres;
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (camera == null) super.paintComponent(g);
 		else camera.dessiner(g);
+		for (Filtre filtre : filtres) {
+			filtre.dessiner(g);
+		}
 	}
 }
