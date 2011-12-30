@@ -107,11 +107,11 @@ public class Client extends JFrame {
 		ecran2.ajouterFiltreDessus(new FiltreUni(new Color(255, 0, 0, 50)));
 		
 		ecran3.ajouterFiltreDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
-				0.5f, new Horloge(10), 1, 1));
+				0.3f, new Horloge(10), 1, 1));
 		
-		ecran4.ajouterFiltreDessus(new FiltreAjuste(Ressources.getMotif("gel.png"), 0.3f));
-		ecran4.ajouterFiltreDessous(new FiltreUni(new Color(200, 200, 255, 100)));
-
+		ecran4.ajouterFiltreDessus(new FiltreUni(new Color(255, 255, 0, 30)));
+		ecran4.ajouterFiltreDessous(new FiltreAjuste(Ressources.getMotif("lumiere.png"), 0.5f));
+		
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");
 		menubar.add(choixEcran);
