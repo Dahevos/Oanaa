@@ -50,7 +50,7 @@ public class FiltreUni extends Filtre {
 	}
 	
 	@Override
-	public void dessiner(Graphics g) {
+	public void dessiner(Graphics g, int largeur, int hauteur) {
 		final Color couleurPrec = g.getColor();
 		Rectangle zone = g.getClipBounds();
 		g.setColor(couleur);

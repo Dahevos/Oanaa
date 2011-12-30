@@ -31,8 +31,8 @@ public class Ecran extends JPanel {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				adapterCamera();
 				super.componentResized(e);
+				adapterCamera();
 			}
 		});
 		setFocusable(true);
@@ -54,7 +54,7 @@ public class Ecran extends JPanel {
 	 * sa taille à celle-ci. Pour corriger ceci, méthode <code>adapterCamera()</code> permet de forcer la caméra
 	 * à se ré-adapter à cet écran.
 	 * <br>Pour mieux contrôler la taille de la caméra, il est également possible d'utiliser
-	 * la méthode <code>redimensionner()</code> de la classe caméra.
+	 * la méthode <code>redimensionner()</code> de la classe <code>Camera</code>.
 	 * @param camera caméra à rattacher à cet écran
 	 */
 	public void setCamera(Camera camera) {
@@ -124,7 +124,7 @@ public class Ecran extends JPanel {
 		if (camera == null) super.paintComponent(g);
 		else camera.dessiner(g);
 		for (Filtre filtre : filtres) {
-			filtre.dessiner(g);
+			filtre.dessiner(g, getWidth(), getHeight());
 		}
 	}
 }

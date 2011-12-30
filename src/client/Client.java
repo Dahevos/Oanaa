@@ -27,9 +27,10 @@ import affichage.CameraFantome;
 import affichage.CameraFixe;
 import affichage.CameraPerso;
 import affichage.Ecran;
+import affichage.FiltreAjuste;
+import affichage.FiltreMotif;
 import affichage.FiltreMotifGlissant;
 import affichage.FiltreUni;
-import affichage.FiltreMotif;
 
 import ressources.Ressources;
 
@@ -99,11 +100,17 @@ public class Client extends JFrame {
 		ecran2 = new Ecran(cameraFixe);
 		ecran3 = new Ecran(cameraFantome);
 		ecran4 = new Ecran(cameraPerso);
+
+		ecran1.ajouterFiltreDessus(new FiltreUni(new Color(200, 200, 255, 100)));
+		ecran1.ajouterFiltreDessus(new FiltreMotif(Ressources.getMotif("gel.png"), 0.3f));
 		
 		ecran2.ajouterFiltreDessus(new FiltreUni(new Color(255, 0, 0, 50)));
-		ecran4.ajouterFiltreDessus(new FiltreMotif(Ressources.getMotif("fog1.png"), 0.3f));
-		ecran1.ajouterFiltreDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
-				0.3f, new Horloge(10), 1, 1));
+		
+		ecran3.ajouterFiltreDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
+				0.5f, new Horloge(10), 1, 1));
+		
+		ecran4.ajouterFiltreDessus(new FiltreAjuste(Ressources.getMotif("gel.png"), 0.3f));
+		ecran4.ajouterFiltreDessous(new FiltreUni(new Color(200, 200, 255, 100)));
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");

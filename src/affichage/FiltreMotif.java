@@ -18,14 +18,14 @@ public class FiltreMotif extends Filtre {
 
 	/**
 	 * Marges (décalages horizontaux et verticaux pour l'affichage).
-	 * Le code doit garantir que : 0 <= margeX < largeur et 0 <= margeY < hauteur.
+	 * Le code doit garantir que : 0 <= margeX < largeurMotif et 0 <= margeY < hauteurMotif.
 	 */
 	private int margeX = 0, margeY = 0;
 
 	/**
 	 * Dimensions du motif.
 	 */
-	private int largeur, hauteur;
+	private int largeurMotif, hauteurMotif;
 
 	/**
 	 * Méthode d'affichage du filtre (pour la transparence).
@@ -40,8 +40,8 @@ public class FiltreMotif extends Filtre {
 	 */
 	public FiltreMotif(Image motif, float alpha) {
 		this.motif = motif;
-		largeur = motif.getWidth(null);
-		hauteur = motif.getHeight(null);
+		largeurMotif = motif.getWidth(null);
+		hauteurMotif = motif.getHeight(null);
 		comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
 	}
 
@@ -68,8 +68,8 @@ public class FiltreMotif extends Filtre {
 		this.motif = motif;
 		margeX = 0;
 		margeY = 0;
-		largeur = motif.getWidth(null);
-		hauteur = motif.getHeight(null);
+		largeurMotif = motif.getWidth(null);
+		hauteurMotif = motif.getHeight(null);
 		comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
 
 		// Notification des écrans
@@ -100,10 +100,10 @@ public class FiltreMotif extends Filtre {
 	 * @param margeY nouvelle marge verticale
 	 */
 	public void setMarges(int margeX, int margeY) {
-		margeX %= largeur;
-		margeY %= hauteur;
-		this.margeX = margeX < 0 ? largeur + margeX : margeX;
-		this.margeY = margeY < 0 ? hauteur + margeY : margeY;
+		margeX %= largeurMotif;
+		margeY %= hauteurMotif;
+		this.margeX = margeX < 0 ? largeurMotif + margeX : margeX;
+		this.margeY = margeY < 0 ? hauteurMotif + margeY : margeY;
 
 		// Notification des écrans
 		for (Ecran ecran : getEcrans()) {
@@ -112,15 +112,15 @@ public class FiltreMotif extends Filtre {
 	}
 
 	@Override
-	public void dessiner(Graphics g) {
+	public void dessiner(Graphics g, int largeur, int hauteur) {
 		if (motif == null) return;
 		Rectangle zone = g.getClipBounds();
 
-		final int iMin = (zone.x + margeX) / largeur;
-		final int jMin = (zone.y + margeY) / hauteur;
+		final int iMin = (zone.x + margeX) / largeurMotif;
+		final int jMin = (zone.y + margeY) / hauteurMotif;
 
-		final int iMax = ((zone.x + margeX + zone.width - 1) + largeur - 1) / largeur;
-		final int jMax = ((zone.y + margeY + zone.height - 1) + hauteur - 1) / hauteur;
+		final int iMax = ((zone.x + margeX + zone.width - 1) + largeurMotif - 1) / largeurMotif;
+		final int jMax = ((zone.y + margeY + zone.height - 1) + hauteurMotif - 1) / hauteurMotif;
 
 		if (g instanceof Graphics2D) {
 			// On utilise Graphics2D pour pouvoir manipuler les composites
@@ -130,14 +130,14 @@ public class FiltreMotif extends Filtre {
 
 			for (int i = iMin; i <= iMax; i++)
 				for (int j = jMin; j <= jMax; j++)
-					g2d.drawImage(motif, i * largeur - margeX, j * hauteur - margeY, null);
+					g2d.drawImage(motif, i * largeurMotif - margeX, j * hauteurMotif - margeY, null);
 
 			g2d.setComposite(compPrec);
 		} else {
 			// On ne peut pas prendre en compte la transparence
 			for (int i = iMin; i <= iMax; i++)
 				for (int j = jMin; j <= jMax; j++)
-					g.drawImage(motif, i * largeur - margeX, j * hauteur - margeY, null);
+					g.drawImage(motif, i * largeurMotif - margeX, j * hauteurMotif - margeY, null);
 		}
 	}
 }

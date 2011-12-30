@@ -39,5 +39,11 @@ public abstract class Filtre {
 		return ecrans;
 	}
 	
-	abstract public void dessiner(Graphics g);
+	/**
+	 * Dessine ce filtre.
+	 * @param g outil de dessin à utiliser
+	 * @param largeur largeur totale de la zone filtrée
+	 * @param hauteur hauteur totale de la zone filtrée
+	 */
+	abstract public void dessiner(Graphics g, int largeur, int hauteur);
 }

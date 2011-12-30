@@ -232,12 +232,12 @@ public abstract class Camera {
 	synchronized public void redimensionner(int largeur, int hauteur) {
 		// Mise à jour des attributs
 		this.largeur = largeur < 0 ? 0 : largeur;
-		nbColImg = (largeur + 30) / 32 + 1;
+		nbColImg = (this.largeur + 30) / 32 + 1;
 		largeurImg = 32 * nbColImg;
 		iLimImg = iBaseImg + nbColImg - 1;
 		xLimImg = 32 * iLimImg;
 		this.hauteur = hauteur < 0 ? 0 : hauteur;
-		nbLigImg = (hauteur + 30) / 32 + 1;
+		nbLigImg = (this.hauteur + 30) / 32 + 1;
 		hauteurImg = 32 * nbLigImg;
 		jLimImg = jBaseImg + nbLigImg - 1;
 		yLimImg = 32 * jLimImg;
@@ -295,7 +295,7 @@ public abstract class Camera {
 	 */
 	synchronized protected void rafraichir() {
 		// Dessin de la carte dans l'offscreen
-		redessiner(xBaseImg, yBaseImg, largeurImg, hauteurImg);
+		redessiner(iBaseImg, jBaseImg, iLimImg, jLimImg);
 		
 		// Notification des écrans
 		for (Ecran ecran : ecrans) {
@@ -361,11 +361,11 @@ public abstract class Camera {
 		if (image == null) {
 			g.fillRect(0, 0, largeur, hauteur);
 		} else {
-			/*
-			g.drawImage(image, xBase - xBaseImg, yBase - yBaseImg, null);
+			//*
+			g.drawImage(image, xBaseImg - xBase, yBaseImg - yBase, null);
 			/*/
 			g.drawImage(image.getSubimage(xBase - xBaseImg, yBase - yBaseImg, largeur, hauteur), 0, 0, null);
-			//*
+			//*/
 		}
 	}
 	
