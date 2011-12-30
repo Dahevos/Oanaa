@@ -7,24 +7,24 @@ import java.awt.Rectangle;
 /**
  * Classe représentant un filtre uni.
  */
-public class FiltreCouleur extends Filtre {
+public class FiltreUni extends Filtre {
 	/**
 	 * Couleur du filtre
 	 */
 	private Color couleur;
 	
 	/**
-	 * Construit une nouveau filtre coloré.
+	 * Construit une nouveau filtre uni.
 	 * @param couleur couleur du filtre
 	 */
-	public FiltreCouleur(Color couleur) {
+	public FiltreUni(Color couleur) {
 		this.couleur = couleur;
 	}
 	
 	/**
 	 * Construit une nouveau filtre noir.
 	 */
-	public FiltreCouleur() {
+	public FiltreUni() {
 		this(Color.BLACK);
 	}
 	

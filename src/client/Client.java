@@ -19,6 +19,7 @@ import modele.Carte;
 import modele.Joueur;
 import modele.PNJ;
 
+import evenements.Horloge;
 import evenements.Teleporteur;
 import evenements.Transformateur;
 
@@ -26,8 +27,9 @@ import affichage.CameraFantome;
 import affichage.CameraFixe;
 import affichage.CameraPerso;
 import affichage.Ecran;
-import affichage.FiltreCouleur;
-import affichage.FiltreImage;
+import affichage.FiltreMotifGlissant;
+import affichage.FiltreUni;
+import affichage.FiltreMotif;
 
 import ressources.Ressources;
 
@@ -98,8 +100,10 @@ public class Client extends JFrame {
 		ecran3 = new Ecran(cameraFantome);
 		ecran4 = new Ecran(cameraPerso);
 		
-		ecran2.ajouterFiltreDessus(new FiltreCouleur(new Color(255, 0, 0, 50)));
-		ecran4.ajouterFiltreDessus(new FiltreImage(Ressources.getMotif("fog1.png"), 0.3f));
+		ecran2.ajouterFiltreDessus(new FiltreUni(new Color(255, 0, 0, 50)));
+		ecran4.ajouterFiltreDessus(new FiltreMotif(Ressources.getMotif("fog1.png"), 0.3f));
+		ecran1.ajouterFiltreDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
+				0.3f, new Horloge(10), 1, 1));
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");
