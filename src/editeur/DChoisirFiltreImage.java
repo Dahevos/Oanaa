@@ -78,7 +78,7 @@ public class DChoisirFiltreImage extends JDialog {
 		try {
 			// Create a File object containing the canonical path of the
 			// desired directory
-			File f = new File(new File(".").getCanonicalPath());
+			File f = new File(new File(".").getCanonicalPath()+"/ressources/motifs/");
 			// Set the current directory
 			fc.setCurrentDirectory(f);
 		} catch (IOException e) {
@@ -111,7 +111,7 @@ public class DChoisirFiltreImage extends JDialog {
 
 		alphaNom = new JLabel("Transparence alpha :");
 
-		niveauAlpha = new SpinnerNumberModel(0.0f, //initial value
+		niveauAlpha = new SpinnerNumberModel(1.0f, //initial value
 				0.0f, //min
 				1.0f, //max
 				0.01f);                //step
@@ -231,17 +231,17 @@ public class DChoisirFiltreImage extends JDialog {
 
 					try {
 						if (type == 0)
-							filtre = new FiltreMotif(Ressources.getMotif(image.getCanonicalPath()), (Float)niveauAlpha.getValue());
+							filtre = new FiltreMotif(Ressources.getMotif(image.getName()), new Float(niveauAlpha.getValue().toString()));
 						else if (type == 1)
-							filtre = new FiltreAjuste(Ressources.getMotif(image.getCanonicalPath()), (Float)niveauAlpha.getValue());
+							filtre = new FiltreAjuste(Ressources.getMotif(image.getName()), new Float(niveauAlpha.getValue().toString()));
 						else
-							filtre = new FiltreMotifGlissant(Ressources.getMotif(image.getCanonicalPath()),
-									 (Float)niveauAlpha.getValue(), new Horloge((Integer)niveauTimer.getValue()), (Integer)niveauX.getValue(), (Integer)niveauY.getValue());
+							filtre = new FiltreMotifGlissant(Ressources.getMotif(image.getName()),
+									new Float(niveauAlpha.getValue().toString()), new Horloge((Integer)niveauTimer.getValue()), (Integer)niveauX.getValue(), (Integer)niveauY.getValue());
 				
 						setVisible(false);
 					}
 					catch (Exception e){
-						JOptionPane.showMessageDialog(null, "Option invalide", "Attention", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Erreur : " + e.getMessage(), "Attention", JOptionPane.WARNING_MESSAGE);
 					}
 			
 			}

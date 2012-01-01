@@ -214,11 +214,10 @@ public class Editeur extends JFrame{
 				0, //min
 				100, //max
 				1);                //step
-		JSpinner jspin = new JSpinner(niveauMap);				
+		JSpinner jspin = new JSpinner(niveauMap);	
 		JMenu niveau = new JMenu("Niveau");
 
 		niveau.add(jspin);
-
 
 		JMenu vueEdition = new JMenu("Édition");
 		menubar.add(vueEdition);
@@ -246,7 +245,8 @@ public class Editeur extends JFrame{
 				Filtre f = choisirFiltre.getFiltre();
 				if (f != null) 
 					ecran.ajouterFiltreDessus(f);
-	
+					edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+
 			}
 		}));	
 		
