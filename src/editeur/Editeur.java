@@ -26,6 +26,7 @@ import modele.Carte;
 
 import affichage.CameraFixe;
 import affichage.Ecran;
+import affichage.Filtre;
 
 import ressources.Ressources;
 
@@ -98,11 +99,11 @@ public class Editeur extends JFrame{
 		String filename = File.separator+"tmp";
 		JFileChooser fc = new JFileChooser(new File(filename));
 		try {
-		    // Create a File object containing the canonical path of the
-		    // desired directory
-		    File f = new File(new File(".").getCanonicalPath());
-		    // Set the current directory
-		    fc.setCurrentDirectory(f);
+			// Create a File object containing the canonical path of the
+			// desired directory
+			File f = new File(new File(".").getCanonicalPath());
+			// Set the current directory
+			fc.setCurrentDirectory(f);
 		} catch (IOException e) {
 		}
 		fc.addChoosableFileFilter(new MyFilter());
@@ -124,9 +125,9 @@ public class Editeur extends JFrame{
 			return "*.dat";
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Afficher une boite de dialogue "Enregistrer un fichier"
 	 */
@@ -134,11 +135,11 @@ public class Editeur extends JFrame{
 		String filename = File.separator+"tmp";
 		JFileChooser fc = new JFileChooser(new File(filename));
 		try {
-		    // Create a File object containing the canonical path of the
-		    // desired directory
-		    File f = new File(new File(".").getCanonicalPath());
-		    // Set the current directory
-		    fc.setCurrentDirectory(f);
+			// Create a File object containing the canonical path of the
+			// desired directory
+			File f = new File(new File(".").getCanonicalPath());
+			// Set the current directory
+			fc.setCurrentDirectory(f);
 		} catch (IOException e) {
 		}
 		fc.addChoosableFileFilter(new MyFilter());
@@ -147,9 +148,12 @@ public class Editeur extends JFrame{
 		File selFile = fc.getSelectedFile();
 		if(!selFile.getName().contains(".dat"))
 			selFile = new File(selFile.getAbsoluteFile() + ".dat");
-		
+
 		return selFile;
 	}
+
+
+
 
 	public void initMenu() {
 		JMenuBar menubar = new JMenuBar();
@@ -167,7 +171,8 @@ public class Editeur extends JFrame{
 				if (val.size() == 2) {
 					edition = new Carte(val.get(0), val.get(1), Ressources.getElement("tileset.png", 0, 0));
 					camera.setCarte(edition);
-					droite.repaint();
+					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
+
 				}
 			}
 		}));
@@ -179,6 +184,8 @@ public class Editeur extends JFrame{
 				if (f != null)  {
 					edition = Carte.lire(f);
 					camera.setCarte(edition);
+					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
+
 				}
 			}
 		}));
@@ -213,9 +220,37 @@ public class Editeur extends JFrame{
 		niveau.add(jspin);
 
 
-		JMenu vueEdition = new JMenu("édition");
+		JMenu vueEdition = new JMenu("Édition");
 		menubar.add(vueEdition);
 		vueEdition.add(niveau);
+
+		JMenu filtre = new JMenu("Filtre");
+		filtre.add(new JMenuItem(new AbstractAction("Couleur") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				for (int ligne = 0; ligne < edition.getLargeur(); ligne++ )
+					for (int colonne=0; colonne < edition.getHauteur(); colonne++) {
+						edition.getCase(ligne,colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne%planche.getElemCourants().size()).get(colonne%planche.getElemCourants().get(0).size()));
+					}
+				edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+
+			}
+		}));
+		filtre.add(new JMenuItem(new AbstractAction("Image") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				DChoisirFiltreImage choisirFiltre = new DChoisirFiltreImage(Editeur.this, "Choisir filtre image", true); 
+				
+				Filtre f = choisirFiltre.getFiltre();
+				if (f != null) 
+					ecran.ajouterFiltreDessus(f);
+	
+			}
+		}));	
+		
+		vueEdition.add(filtre);
 
 		vueEdition.add(new JMenuItem(new AbstractAction("Remplir") {
 			@Override
@@ -230,6 +265,8 @@ public class Editeur extends JFrame{
 			}
 		}));
 
+
+		
 		setJMenuBar(menubar);
 
 
@@ -247,9 +284,10 @@ public class Editeur extends JFrame{
 			if (i < edition.getLargeur() && j < edition.getHauteur()) {
 				for (int ligne = 0; ligne < planche.getElemCourants().size(); ligne++ )
 					for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
-						edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
-						edition.rafraichir(i + ligne, j + colonne, 32, 32);
-
+						if (i+ligne < edition.getLargeur() && j+colonne < edition.getHauteur()) {
+							edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
+							edition.rafraichir(i + ligne, j + colonne, 32, 32);
+						}
 					}
 			}
 		}

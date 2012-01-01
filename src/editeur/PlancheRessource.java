@@ -132,6 +132,7 @@ public class PlancheRessource extends JPanel {
 				int newI =  e.getX()/32;
 				int newJ = e.getY()/32;
 				
+				
 				if (newI < i) {
 					int temp = i;
 					i=newI;
@@ -159,7 +160,9 @@ public class PlancheRessource extends JPanel {
 
 
 				}
-				repaint(32 * i, 32 * j, elemCourants.size()*32, elemCourants.get(0).size()*32);
+				
+				repaint(32 * i, 32 * j, largeur*32,hauteur*32); // efface l'ancien
+				repaint(32 * i, 32 * j, elemCourants.size()*32, elemCourants.get(0).size()*32); // refresh le new
 
 				
 			}
