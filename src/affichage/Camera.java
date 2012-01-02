@@ -1,8 +1,11 @@
 package affichage;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -41,7 +44,7 @@ public abstract class Camera {
 	/**
 	 * Objet utilisé pour dessiner dans l'offscreen
 	 */
-	private Graphics g = null;
+	private Graphics2D g = null;
 
 	/**
 	 * Coordonnées de la première case de l'offscreen
@@ -283,10 +286,16 @@ public abstract class Camera {
 	synchronized protected void redessiner(int iMin, int jMin, int iMax, int jMax) {
 		if (g == null) return;
 		synchronized (g) {
+			// Suppression du contenu précédent
+			Composite compPrec = g.getComposite();
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(32 * (iMin - iBaseImg), 32 * (jMin - jBaseImg),
+					32 * (iMax - iMin + 1), 32 * (jMax - jMin + 1));
+			g.setComposite(compPrec);
+			
+			// Dessin de la portion de carte
 			if (carte != null)
 				carte.dessiner(g, iBaseImg, jBaseImg, iMin, jMin, iMax, jMax);
-			else
-				g.fillRect(iMin - xBaseImg, jMin - yBaseImg, iMax - iMin + 1, jMax - jMin + 1);
 		}
 	}
 
@@ -361,7 +370,26 @@ public abstract class Camera {
 		if (image == null) {
 			g.fillRect(0, 0, largeur, hauteur);
 		} else {
-			//*
+			/*
+			 * Si dessous, deux possibilités pour dessiner l'offscreen dans g :
+			 *  => tout dessiner et laisser le clipping de g faire son travail
+			 *  => ne dessiner que la partie censée être visible (largeur x hauteur)
+			 *  
+			 *  La première solution pose problème si la caméra est plus petite que la zone de dessin
+			 *  réelle (l'écran) : certaines parties de l'offscreen (bords) sont affichées alors
+			 *  qu'elles ne devraient pas. Pour observer cela, on peut redimensionner la caméra pour
+			 *  qu'elle soit plus petite que l'écran : on voit que les bords de l'offscreen sont
+			 *  dessinés en cas de rafraîchissement total de l'écran (déplacement de la caméra, ...)
+			 *  mais pas en cas de rafraîchissement local (déplacement des pnj, ...) => c'est moche.
+			 *
+			 *  La deuxième solution résout ce problème mais nécessite (peut-être) une instance, ce qui
+			 *  risque d'être assez coûteux car c'est une opération très fréquente.
+			 *  
+			 *  Il faudrait donc comparer les performances : si la différence n'est pas significative,
+			 *  autant utiliser la deuxième solution, sinon il faudra se rabattre sur la première.
+			 */
+			
+			/*
 			g.drawImage(image, xBaseImg - xBase, yBaseImg - yBase, null);
 			/*/
 			g.drawImage(image.getSubimage(xBase - xBaseImg, yBase - yBaseImg, largeur, hauteur), 0, 0, null);

@@ -1,6 +1,7 @@
 package editeur;
 
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,6 +28,7 @@ import modele.Carte;
 import affichage.CameraFixe;
 import affichage.Ecran;
 import affichage.Filtre;
+import affichage.FiltreUni;
 
 import ressources.Ressources;
 
@@ -68,6 +70,7 @@ public class Editeur extends JFrame{
 		/* contenu de droite (carte) */
 		camera = new CameraFixe(edition);
 		ecran = new Ecran(camera);
+		ecran.ajouterSolDessous(new FiltreUni(Color.BLACK)); // Mise en place du fond noir (A CHANGER ?)
 		droite = new JScrollPane(ecran);
 		droite.getHorizontalScrollBar().setUnitIncrement(32);
 		droite.getHorizontalScrollBar().setBlockIncrement(32);
@@ -232,7 +235,7 @@ public class Editeur extends JFrame{
 					for (int colonne=0; colonne < edition.getHauteur(); colonne++) {
 						edition.getCase(ligne,colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne%planche.getElemCourants().size()).get(colonne%planche.getElemCourants().get(0).size()));
 					}
-				edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
+				edition.rafraichir(0, 0, edition.getLargeur() - 1, edition.getHauteur() - 1);
 
 			}
 		}));
@@ -244,7 +247,7 @@ public class Editeur extends JFrame{
 				
 				Filtre f = choisirFiltre.getFiltre();
 				if (f != null) 
-					ecran.ajouterFiltreDessus(f);
+					ecran.ajouterCielDessus(f);
 					edition.rafraichir(0, 0, edition.getLargeur(), edition.getHauteur());
 
 			}

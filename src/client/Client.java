@@ -27,6 +27,7 @@ import affichage.CameraFantome;
 import affichage.CameraFixe;
 import affichage.CameraPerso;
 import affichage.Ecran;
+import affichage.Filtre;
 import affichage.FiltreAjuste;
 import affichage.FiltreMotif;
 import affichage.FiltreMotifGlissant;
@@ -101,16 +102,22 @@ public class Client extends JFrame {
 		ecran3 = new Ecran(cameraFantome);
 		ecran4 = new Ecran(cameraPerso);
 
-		ecran1.ajouterFiltreDessus(new FiltreUni(new Color(200, 200, 255, 100)));
-		ecran1.ajouterFiltreDessus(new FiltreMotif(Ressources.getMotif("gel.png"), 0.3f));
-		
-		ecran2.ajouterFiltreDessus(new FiltreUni(new Color(255, 0, 0, 50)));
-		
-		ecran3.ajouterFiltreDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
+		Filtre filtreNoir = new FiltreUni(Color.BLACK);
+
+		ecran1.ajouterSolDessous(filtreNoir);
+		ecran1.ajouterCielDessus(new FiltreUni(new Color(200, 200, 255, 100)));
+		ecran1.ajouterCielDessus(new FiltreMotif(Ressources.getMotif("gel.png"), 0.3f));
+
+		ecran2.ajouterSolDessous(filtreNoir);
+		ecran2.ajouterCielDessus(new FiltreUni(new Color(255, 0, 0, 50)));
+
+		ecran3.ajouterSolDessous(filtreNoir);
+		ecran3.ajouterCielDessus(new FiltreMotifGlissant(Ressources.getMotif("fog1.png"),
 				0.3f, new Horloge(10), 1, 1));
-		
-		ecran4.ajouterFiltreDessus(new FiltreUni(new Color(255, 255, 0, 30)));
-		ecran4.ajouterFiltreDessous(new FiltreAjuste(Ressources.getMotif("lumiere.png"), 0.5f));
+
+		ecran4.ajouterSolDessous(filtreNoir);
+		ecran4.ajouterCielDessus(new FiltreUni(new Color(255, 255, 0, 30)));
+		ecran4.ajouterCielDessous(new FiltreAjuste(Ressources.getMotif("lumiere.png"), 0.5f));
 		
 		JMenuBar menubar = new JMenuBar();
 		JMenu choixEcran = new JMenu("Choix écran");
@@ -271,6 +278,13 @@ public class Client extends JFrame {
 		System.out.println("Après nettoyage : " + getMemoire());
 
 		setVisible(true);
+		
+		/* Pour tester le redimensionnement de la caméra
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {}
+		cameraPerso.redimensionner(50, 50);
+		*/
 	}
 
 	public static String getMemoire() {

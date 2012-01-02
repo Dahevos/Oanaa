@@ -7,10 +7,11 @@ import java.util.LinkedList;
 import javax.swing.JPanel;
 
 /**
- * Classe contenant le composant graphique destiné à afficher une scène.
- * Celui-ci contient principalement une image "OffScreen" qui doit être gérée par une caméra.
- * Un écran est donc fortement lié à sa caméra (lorsqu'il en a une) : celle-ci est responsable
- * de toutes les tâches de dessin.
+ * Classe contenant le composant graphique destiné à afficher une caméra.<br>
+ * Un écran est donc composé d'une caméra ainsi que d'un ensemble de sols et de ciels, sous la forme
+ * de filtres.
+ * Les sols sont affichés sous la caméra, qui est elle même affichée sous les ciels.
+ * <p>Attention : le premier sol doit absolument être entièrement opaque.
  */
 @SuppressWarnings("serial")
 public class Ecran extends JPanel {
@@ -20,9 +21,14 @@ public class Ecran extends JPanel {
 	private Camera camera = null;
 	
 	/**
-	 * Liste des filtres associés à cet écran
+	 * Liste des sols associés à cet écran
 	 */
-	private final LinkedList<Filtre> filtres = new LinkedList<Filtre>();
+	private final LinkedList<Filtre> sols = new LinkedList<Filtre>();
+	
+	/**
+	 * Liste des ciels associés à cet écran
+	 */
+	private final LinkedList<Filtre> ciels = new LinkedList<Filtre>();
 	
 	/**
 	 * Construit un nouvel écran attaché à aucune caméra.
@@ -74,7 +80,6 @@ public class Ecran extends JPanel {
 	 */
 	private void adapterCamera() {
 		if (camera != null) camera.redimensionner(getWidth(), getHeight());
-		repaint();
 	}
 
 	/**
@@ -86,45 +91,81 @@ public class Ecran extends JPanel {
 	}
 	
 	/**
-	 * Ajoute un filtre à cet écran, en dessous des autres.
-	 * @param filtre filtre à ajouter
+	 * Ajoute un ciel à cet écran, en dessous des autres.
+	 * @param ciel ciel à ajouter
 	 */
-	public void ajouterFiltreDessous(Filtre filtre) {
-		filtres.addFirst(filtre);
-		filtre.ajouterEcran(this);
+	public void ajouterCielDessous(Filtre ciel) {
+		ciels.addFirst(ciel);
+		ciel.ajouterEcran(this);
 	}
 	
 	/**
-	 * Ajoute un filtre à cet écran, au dessus des autres.
-	 * @param filtre filtre à ajouter
+	 * Ajoute un ciel à cet écran, au dessus des autres.
+	 * @param ciel ciel à ajouter
 	 */
-	public void ajouterFiltreDessus(Filtre filtre) {
-		filtres.addLast(filtre);
-		filtre.ajouterEcran(this);
+	public void ajouterCielDessus(Filtre ciel) {
+		ciels.addLast(ciel);
+		ciel.ajouterEcran(this);
 	}
 	
 	/**
-	 * Retire un filtre de cet écran.
-	 * @param filtre filtre à retirer
+	 * Retire un ciel de cet écran.
+	 * @param ciel ciel à retirer
 	 */
-	public void retirerFiltre(Filtre filtre) {
-		filtres.remove(filtre);
+	public void retirerCiel(Filtre ciel) {
+		ciels.remove(ciel);
 	}
 	
 	/**
-	 * Retourne l'ensemble des filtres appliqués à cet écran.
-	 * @return l'ensemble des filtres appliqués à cet écran
+	 * Retourne l'ensemble des ciels appliqués à cet écran.
+	 * @return l'ensemble des ciels appliqués à cet écran
 	 */
-	public LinkedList<Filtre> getFiltres() {
-		return filtres;
+	public LinkedList<Filtre> getCiels() {
+		return ciels;
+	}
+	
+	/**
+	 * Ajoute un sol à cet écran, en dessous des autres.
+	 * @param sol sol à ajouter
+	 */
+	public void ajouterSolDessous(Filtre sol) {
+		sols.addFirst(sol);
+		sol.ajouterEcran(this);
+	}
+	
+	/**
+	 * Ajoute un sol à cet écran, au dessus des autres.
+	 * @param sol sol à ajouter
+	 */
+	public void ajouterSolDessus(Filtre sol) {
+		sols.addLast(sol);
+		sol.ajouterEcran(this);
+	}
+	
+	/**
+	 * Retire un sol de cet écran.
+	 * @param sol sol à retirer
+	 */
+	public void retirerSol(Filtre sol) {
+		sols.remove(sol);
+	}
+	
+	/**
+	 * Retourne l'ensemble des sols appliqués à cet écran.
+	 * @return l'ensemble des sols appliqués à cet écran
+	 */
+	public LinkedList<Filtre> getSols() {
+		return sols;
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		if (camera == null) super.paintComponent(g);
-		else camera.dessiner(g);
-		for (Filtre filtre : filtres) {
-			filtre.dessiner(g, getWidth(), getHeight());
+		for (Filtre sol : sols) {
+			sol.dessiner(g, getWidth(), getHeight());
+		}
+		if (camera != null) camera.dessiner(g);
+		for (Filtre ciel : ciels) {
+			ciel.dessiner(g, getWidth(), getHeight());
 		}
 	}
 }
