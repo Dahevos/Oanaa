@@ -286,7 +286,7 @@ public class Editeur extends JFrame{
 					for (int colonne=0; colonne < planche.getElemCourants().get(ligne).size(); colonne++) {
 						if (i+ligne < edition.getLargeur() && j+colonne < edition.getHauteur()) {
 							edition.getCase(i + ligne, j + colonne).setCouche((Integer) niveauMap.getValue(), planche.getElemCourants().get(ligne).get(colonne));
-							edition.rafraichir(i + ligne, j + colonne, 32, 32);
+							edition.rafraichir(i + ligne, j + colonne, i + ligne, j + colonne);
 						}
 					}
 			}
