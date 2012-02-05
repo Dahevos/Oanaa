@@ -48,7 +48,8 @@ public class DChoisirFiltreImage extends JDialog {
 		//On appelle le construteur de JDialog correspondant
 		super(parent, title, modal);
 		//On spécifie une taille
-		this.setSize(200, 150);
+		
+		this.setMinimumSize(new Dimension(200, 150));
 		//La position
 		this.setLocationRelativeTo(null);
 		//La boîte ne devra pas être redimensionnable
@@ -184,7 +185,7 @@ public class DChoisirFiltreImage extends JDialog {
 	    //Register a listener for the radio buttons.
 	    normalButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				setSize(200, 150);
+				setMinimumSize(new Dimension(200, 150));
 				type=0;
 				jspinTimer.setVisible(false);
 				timerNom.setVisible(false);
@@ -196,7 +197,7 @@ public class DChoisirFiltreImage extends JDialog {
 	    });
 	    adjustButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {		
-				setSize(200, 150);
+				setMinimumSize(new Dimension(200, 150));
 				type=1;
 				jspinTimer.setVisible(false);
 				timerNom.setVisible(false);
@@ -208,7 +209,7 @@ public class DChoisirFiltreImage extends JDialog {
 	    });
 	    defileButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				setSize(200, 225);
+				setMinimumSize(new Dimension(200, 225));
 
 				type=2;
 				jspinTimer.setVisible(true);

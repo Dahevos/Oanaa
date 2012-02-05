@@ -171,7 +171,7 @@ public class PlancheRessource extends JPanel {
 	
 	}
 	
-	private class EcouteurClavier extends KeyAdapter {
+	public class EcouteurClavier extends KeyAdapter {
 
 		@Override
 		public void keyPressed(KeyEvent e) {

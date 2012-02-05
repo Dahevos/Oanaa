@@ -23,6 +23,8 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 
+import editeur.PlancheRessource;
+
 import modele.Carte;
 
 import affichage.CameraFixe;
@@ -48,12 +50,13 @@ public class Editeur extends JFrame{
 
 	public Editeur(){
 
+
 		/* initialisation et paramétrage de la JFrame */
 		this.setTitle("Editeur de carte");
 		this.setSize(1024, 800);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+	
 
 		/* contenu de gauche (planche ressources) */
 		planche = new PlancheRessource("theme3.png");
@@ -85,10 +88,9 @@ public class Editeur extends JFrame{
 		this.setContentPane(split);
 
 		/* construction du menu */
-		initMenu();
 		ecran.addMouseListener(new EcouteurSouris());
 
-
+		initMenu();
 
 		this.setVisible(true);
 	}
@@ -220,8 +222,9 @@ public class Editeur extends JFrame{
 		JSpinner jspin = new JSpinner(niveauMap);	
 		JMenu niveau = new JMenu("Niveau");
 
-		niveau.add(jspin);
-
+		//niveau.add(jspin);
+		menubar.add(jspin);
+		
 		JMenu vueEdition = new JMenu("Édition");
 		menubar.add(vueEdition);
 		vueEdition.add(niveau);
