@@ -104,6 +104,7 @@ public class PlancheRessource extends JPanel {
 	private class EcouteurSouris extends MouseAdapter {		
 	
 		public void mouseClicked(MouseEvent e) {
+			requestFocus();
 
 			int largeur = elemCourants.size();
 			int hauteur = elemCourants.get(0).size();

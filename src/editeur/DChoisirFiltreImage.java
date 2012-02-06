@@ -48,14 +48,15 @@ public class DChoisirFiltreImage extends JDialog {
 		//On appelle le construteur de JDialog correspondant
 		super(parent, title, modal);
 		//On spécifie une taille
-		
-		this.setMinimumSize(new Dimension(200, 150));
+		//this.setMinimumSize(new Dimension(200, 150));
 		//La position
 		this.setLocationRelativeTo(null);
 		//La boîte ne devra pas être redimensionnable
 		this.setResizable(false);
 		// on l'initialise
 		this.initComponent();
+		// On dimensionne la fenêtre
+		pack();
 		//Enfin on l'affiche
 		this.setVisible(true);
 		//Tout ceci ressemble à ce que nous faisons depuis le début avec notre JFrame...
