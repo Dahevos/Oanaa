@@ -2,7 +2,10 @@ package editeur;
 
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -24,6 +28,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 
 import editeur.PlancheRessource;
+import editeur.PlancheRessource.EcouteurClavier;
 
 import modele.Carte;
 
@@ -91,6 +96,8 @@ public class Editeur extends JFrame{
 		ecran.addMouseListener(new EcouteurSouris());
 
 		initMenu();
+
+		addKeyListener(new EcouteurClavier());
 
 		this.setVisible(true);
 	}
@@ -215,19 +222,10 @@ public class Editeur extends JFrame{
 
 
 
-		niveauMap = new SpinnerNumberModel(0, //initial value
-				0, //min
-				100, //max
-				1);                //step
-		JSpinner jspin = new JSpinner(niveauMap);	
-		JMenu niveau = new JMenu("Niveau");
 
-		//niveau.add(jspin);
-		menubar.add(jspin);
 		
 		JMenu vueEdition = new JMenu("Édition");
 		menubar.add(vueEdition);
-		vueEdition.add(niveau);
 
 		JMenu filtre = new JMenu("Filtre");
 		filtre.add(new JMenuItem(new AbstractAction("Couleur") {
@@ -271,7 +269,22 @@ public class Editeur extends JFrame{
 			}
 		}));
 
+		
+		
 
+		JLabel niveauMapNom = new JLabel("Couche n° :");
+		menubar.add(niveauMapNom);
+		
+		niveauMap = new SpinnerNumberModel(0, //initial value
+				0, //min
+				100, //max
+				1);                //step
+		JSpinner jspin = new JSpinner(niveauMap);	
+		jspin.setMaximumSize(new Dimension(40,50));
+		
+		menubar.add(jspin);
+		
+		
 		
 		setJMenuBar(menubar);
 
@@ -326,6 +339,24 @@ public class Editeur extends JFrame{
 		//		}
 	}
 
+	
+	public class EcouteurClavier extends KeyAdapter {
+
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_PLUS)
+				niveauMap.setValue(niveauMap.getNextValue());
+			
+			if (e.getKeyCode() == KeyEvent.VK_MINUS)
+				niveauMap.setValue(niveauMap.getPreviousValue());
+		}		
+		
+		
+
+	
+	}
+	
 	public static void main(String[] args){
 		//* Utilisation du "Look & Feel" du système (si possible)
 		try {

@@ -110,6 +110,7 @@ public class PlancheRessource extends JPanel {
 			int hauteur = elemCourants.get(0).size();
 			elemCourants.clear();
 
+
 			if (!ctrl) {
 
 				final int iPrec = i, jPrec = j;
@@ -129,21 +130,24 @@ public class PlancheRessource extends JPanel {
 				}
 			}
 			else {
-				
+
+
 				int newI =  e.getX()/32;
 				int newJ = e.getY()/32;
-				
+				boolean redefIJ = false;
 				
 				if (newI < i) {
 					int temp = i;
 					i=newI;
 					newI = temp;
+					redefIJ = true;
 				}
 	
 				if (newJ < j) {
 					int temp = j;
 					j=newJ;
 					newJ = temp;
+					redefIJ = true;
 				}
 				
 				
@@ -162,9 +166,14 @@ public class PlancheRessource extends JPanel {
 
 				}
 				
-				repaint(32 * i, 32 * j, largeur*32,hauteur*32); // efface l'ancien
+				// si on a redéfinit le i et le j, les anciennes valeurs étaient newI et newJ, 
+				// d'ou la respécification pour le refresgh
+				if (redefIJ)
+					repaint(32 * newI, 32 * newJ, largeur*32,hauteur*32); // efface l'ancien
+				else
+					repaint(32 * i, 32 * j, largeur*32,hauteur*32); // efface l'ancien
+					
 				repaint(32 * i, 32 * j, elemCourants.size()*32, elemCourants.get(0).size()*32); // refresh le new
-
 				
 			}
 		}
