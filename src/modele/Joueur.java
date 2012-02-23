@@ -10,9 +10,26 @@ public class Joueur extends Personnage implements KeyListener {
 	public Joueur(Apparence apparence) {
 		super(apparence);
 	}
-
+	
 	public Joueur(Apparence apparence, Carte carte, int i, int j) {
 		super(apparence, carte, i, j);
+	}
+
+	public Joueur(Apparence apparence, Carte carte, int i, int j, Direction dir) {
+		super(apparence, carte, i, j, dir);
+	}
+
+	public Joueur(Apparence apparence, double vitesse, Carte carte, int i,
+			int j, Direction dir) {
+		super(apparence, vitesse, carte, i, j, dir);
+	}
+
+	public Joueur(Apparence apparence, double vitesse, Carte carte, int i, int j) {
+		super(apparence, vitesse, carte, i, j);
+	}
+
+	public Joueur(Apparence apparence, double vitesse) {
+		super(apparence, vitesse);
 	}
 	
 	@Override

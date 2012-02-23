@@ -82,11 +82,13 @@ public class Client extends JFrame {
 		carte1.getCase(3, 0).ajouterActionSol(new Transformateur(Ressources.getApparence("charset3.png")));
 
 		joueur1 = new Joueur(Ressources.getApparence("charset.png"), carte1, 3, 2);
-		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), carte1, 2, 3);
+		joueur2 = new Joueur(Ressources.getApparence("charset3.png"), 5, carte1, 2, 3);
 
 		//*
 		for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++)
-			pnj = new PNJ(Ressources.getApparence("charset2.png"), carte1, 6 + i, 6 + j, 100, 1000);
+			pnj = new PNJ(Ressources.getApparence("charset2.png"),
+					Math.round(1 + 3 * Math.random()), // Vitesses aléatoires entre 1 et 4
+					carte1, 6 + i, 6 + j, 100, 1000);
 		//*/
 
 		setFocusable(true);

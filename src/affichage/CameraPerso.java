@@ -60,7 +60,7 @@ public class CameraPerso extends Camera {
 		public void persoBouge(Personnage perso, Direction dir) {
 			synchronized (CameraPerso.this) {
 				// Déplacement de la caméra
-				deplacer(dir, 8);
+				deplacer(dir, perso.increment);
 
 				// Mise à jour de la zone du personnage
 				switch (dir) {

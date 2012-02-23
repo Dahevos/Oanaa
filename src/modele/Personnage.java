@@ -13,13 +13,30 @@ public abstract class Personnage {
 	private int x = -1, y = -1;
 	private Direction dir, dirSuiv;
 	private int instant;
+	public int increment; // Déplacement par mouvement
+	private long periode; // Durée d'un mouvement
 	private Thread deplacement = null;
 	private final ArrayList<EcouteurPerso> ecouteurs = new ArrayList<EcouteurPerso>();
 
-	public Personnage(Apparence apparence) {
+	public Personnage(Apparence apparence, double vitesse) {
 		this.apparence = apparence;
+		setVitesse(vitesse);
+	}
+
+	public Personnage(Apparence apparence, double vitesse, Carte carte, int i, int j,
+			Direction dir) {
+		this(apparence, vitesse);
+		setCarte(carte, i, j, dir);
+	}
+
+	public Personnage(Apparence apparence, double vitesse, Carte carte, int i, int j) {
+		this(apparence, vitesse, carte, i, j, Direction.BAS);
 	}
 	
+	public Personnage(Apparence apparence) {
+		this(apparence, 2.5);
+	}
+
 	public Personnage(Apparence apparence, Carte carte, int i, int j, Direction dir) {
 		this(apparence);
 		setCarte(carte, i, j, dir);
@@ -28,21 +45,21 @@ public abstract class Personnage {
 	public Personnage(Apparence apparence, Carte carte, int i, int j) {
 		this(apparence, carte, i, j, Direction.BAS);
 	}
-	
+
 	public Apparence getApparence() {
 		return apparence;
 	}
-	
+
 	public void setApparence(Apparence apparence) {
 		if (this.apparence == apparence) return;
 		this.apparence = apparence;
 		if (carte != null) carte.rafraichir(i, j - 1, i, j);
 	}
-	
+
 	public void ajouterEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.add(ecouteur);
 	}
-	
+
 	public void retirerEcouteur(EcouteurPerso ecouteur) {
 		ecouteurs.remove(ecouteur);
 	}
@@ -66,7 +83,7 @@ public abstract class Personnage {
 	public int getY() {
 		return y;
 	}
-	
+
 	public boolean setCarte(Carte carte, int i, int j) {
 		return setCarte(carte, i, j, this.dir);
 	}
@@ -96,12 +113,31 @@ public abstract class Personnage {
 		instant = 0;
 		carte.getCase(i, j).setPerso(this);
 		carte.rafraichir(i, j - 1, i, j);
-		
+
 		// Signalement du changement de carte
 		for (EcouteurPerso ecouteur : ecouteurs) {
 			ecouteur.carteChangee(this, carte);
 		}
 		return true;
+	}
+
+	public double getVitesse() {
+		return (1000.0 * increment) / (periode * 32);
+	}
+	
+	private final static long FREQ_MIN = 20;
+	private final static long PERIODE_MAX = 1000 / FREQ_MIN;
+
+	public double setVitesse(double vitesse) {
+		long nouvPeriode;
+		for (int nouvIncr = 1; nouvIncr <= 32; nouvIncr *= 2) {
+			nouvPeriode = Math.round((1000 * nouvIncr) / (vitesse * 32));
+			if (nouvIncr > 1 && nouvPeriode > PERIODE_MAX) break;
+			increment = nouvIncr;
+			periode = nouvPeriode;
+		}
+
+		return getVitesse();
 	}
 
 	public boolean deplacer(Direction dir) {
@@ -112,7 +148,7 @@ public abstract class Personnage {
 			dirSuiv = dir;
 			return false;
 		}
-		
+
 		// Mise à jour de la direction
 		boolean nouvDir = ! dir.equals(this.dir);
 		if (nouvDir) {
@@ -172,17 +208,17 @@ public abstract class Personnage {
 		public Deplacement(int nouvI, int nouvJ) {
 			this.nouvI = nouvI;
 			this.nouvJ = nouvJ;
-			dx = (nouvI - Personnage.this.i) * 8;
-			dy = (nouvJ - Personnage.this.j) * 8;
+			dx = (nouvI - Personnage.this.i) * increment;
+			dy = (nouvJ - Personnage.this.j) * increment;
 		}
 
 		@Override
 		public void run() {
 			// Déplacement de l'image
-			for (int k = 1; k <= 4; k++) {
+			for (int k = 1; k * increment <= 32; k++) {
 				x += dx;
 				y += dy;
-				instant = k % 4;
+				instant = ((k * increment) / 8) % 4;
 
 				// Signalement du déplacement
 				for (EcouteurPerso ecouteur : ecouteurs) {
@@ -197,10 +233,10 @@ public abstract class Personnage {
 				case HAUT: carte.rafraichir(i, j - 2, i, j); break;
 				}
 				try {
-					Thread.sleep(100);
+					Thread.sleep(periode);
 				} catch (InterruptedException e) {}
 			}
-			
+
 			// Mise en place de la nouvelle position
 			Case orig = carte.getCase(Personnage.this.i, Personnage.this.j);
 			orig.liberer();
@@ -208,7 +244,7 @@ public abstract class Personnage {
 			Personnage.this.i = nouvI;
 			Personnage.this.j = nouvJ;
 			carte.getCase(nouvI, nouvJ).setPerso(Personnage.this);
-			
+
 			// Libération de la ressource
 			deplacement = null;
 			Direction dir = dirSuiv;
