@@ -48,16 +48,17 @@ public class CameraPerso extends Camera {
 
 	private class Ecouteur implements EcouteurPerso {
 		@Override
-		public void carteChangee(Personnage perso, Carte carte) {
+		public boolean carteChangee(Personnage perso, Carte carte) {
 			synchronized (CameraPerso.this) {
 				CameraPerso.super.setCarte(carte);
 				recalculerBase();
 				rafraichir();
+				return true;
 			}
 		}
 
 		@Override
-		public void persoBouge(Personnage perso, Direction dir) {
+		public boolean persoBouge(Personnage perso, Direction dir) {
 			synchronized (CameraPerso.this) {
 				// Déplacement de la caméra
 				deplacer(dir, perso.increment);
@@ -83,6 +84,8 @@ public class CameraPerso extends Camera {
 			for (Ecran ecran : getEcrans()) {
 				ecran.repaint();
 			}
+			
+			return true;
 		}
 	}
 }

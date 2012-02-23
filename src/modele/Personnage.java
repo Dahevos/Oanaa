@@ -221,16 +221,20 @@ public abstract class Personnage {
 				instant = ((k * increment) / 8) % 4;
 
 				// Signalement du déplacement
+				boolean rafraichie = false;
 				for (EcouteurPerso ecouteur : ecouteurs) {
-					ecouteur.persoBouge(Personnage.this, dir);
+					// Attention : l'ordre compte à cause de l'évaluation passive
+					rafraichie = ecouteur.persoBouge(Personnage.this, dir) || rafraichie;
 				}
 
-				// Mise à jour de la carte
-				switch(dir) {
-				case BAS: carte.rafraichir(i, j - 1, i, j + 1); break;
-				case GAUCHE: carte.rafraichir(i - 1, j - 1, i, j); break;
-				case DROITE: carte.rafraichir(i, j - 1, i + 1, j); break;
-				case HAUT: carte.rafraichir(i, j - 2, i, j); break;
+				if (! rafraichie) {
+					// Mise à jour de la carte
+					switch(dir) {
+					case BAS: carte.rafraichir(i, j - 1, i, j + 1); break;
+					case GAUCHE: carte.rafraichir(i - 1, j - 1, i, j); break;
+					case DROITE: carte.rafraichir(i, j - 1, i + 1, j); break;
+					case HAUT: carte.rafraichir(i, j - 2, i, j); break;
+					}
 				}
 				try {
 					Thread.sleep(periode);

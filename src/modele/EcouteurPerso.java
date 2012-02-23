@@ -1,6 +1,6 @@
 package modele;
 
 public interface EcouteurPerso {
-	public void carteChangee(Personnage perso, Carte carte);
-	public void persoBouge(Personnage perso, Direction dir);
+	public boolean carteChangee(Personnage perso, Carte carte);
+	public boolean persoBouge(Personnage perso, Direction dir);
 }
