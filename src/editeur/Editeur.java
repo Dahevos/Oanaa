@@ -178,14 +178,14 @@ public class Editeur extends JFrame{
 		vue.add(new JMenuItem(new AbstractAction("Nouvelle carte") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				DChoisirCarte choisirCarte = new DChoisirCarte(Editeur.this, "Taille de la carte", true); 
-				ArrayList<Integer> val = choisirCarte.getValCarte();
-				if (val.size() == 2) {
-					edition = new Carte(val.get(0), val.get(1), Ressources.getElement("tileset.png", 0, 0));
-					camera.setCarte(edition);
-					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
-
-				}
+				DemandeNouvelleCarte choisirCarte = new DemandeNouvelleCarte(Editeur.this, "Taille de la carte", true); 
+//				ArrayList<Integer> val = choisirCarte.getValCarte();
+//				if (val.size() == 2) {
+//					edition = new Carte(val.get(0), val.get(1), Ressources.getElement("tileset.png", 0, 0));
+//					camera.setCarte(edition);
+//					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
+//
+//				}
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
