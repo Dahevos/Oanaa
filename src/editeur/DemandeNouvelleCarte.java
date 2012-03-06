@@ -63,15 +63,15 @@ public class DemandeNouvelleCarte extends JDialog {
 		add(YVal, gbc);
 		
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.gridwidth = GridBagConstraints.CENTER;
-		gbc.weightx = 2;
+		gbc.gridwidth = 2;
+		//gbc.weightx = 1;
 		gbc.insets = new Insets(5, 5, 0, 5);
 		JButton ok = new JButton("Créer");
 		add(ok, gbc);
 
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.weightx = 2;
+		//gbc.weightx = 1;
 		gbc.insets = new Insets(5, 5, 0, 5);
 		JButton annuler = new JButton("Annuler");
 		add(annuler, gbc);
@@ -79,5 +79,8 @@ public class DemandeNouvelleCarte extends JDialog {
 		pack();
 	}
 	
-
+	public static void main(String[] args) {
+		new DemandeNouvelleCarte(null, "Toto", true);
+		System.exit(0);
+	}
 }
