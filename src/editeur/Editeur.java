@@ -179,13 +179,12 @@ public class Editeur extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				DemandeNouvelleCarte choisirCarte = new DemandeNouvelleCarte(Editeur.this, "Taille de la carte", true); 
-//				ArrayList<Integer> val = choisirCarte.getValCarte();
-//				if (val.size() == 2) {
-//					edition = new Carte(val.get(0), val.get(1), Ressources.getElement("tileset.png", 0, 0));
-//					camera.setCarte(edition);
-//					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
-//
-//				}
+				if (!choisirCarte.XVal.getText().equals("") && !choisirCarte.YVal.getText().equals("")) {
+					edition = new Carte(Integer.parseInt(choisirCarte.XVal.getText()), Integer.parseInt(choisirCarte.YVal.getText()), Ressources.getElement("tileset.png", 0, 0));
+					camera.setCarte(edition);
+					droite.getVerticalScrollBar().updateUI(); // maj de tout les scrollbar de l'interface
+				}
+
 			}
 		}));
 		vue.add(new JMenuItem(new AbstractAction("Charger carte") {
@@ -345,11 +344,16 @@ public class Editeur extends JFrame{
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_PLUS)
+			if (e.getKeyCode() == KeyEvent.VK_PLUS) {
 				niveauMap.setValue(niveauMap.getNextValue());
+			System.out.println("test");	
+			}
 			
-			if (e.getKeyCode() == KeyEvent.VK_MINUS)
+			if (e.getKeyCode() == KeyEvent.VK_MINUS) {
 				niveauMap.setValue(niveauMap.getPreviousValue());
+				System.out.println("test");	
+
+			}
 		}		
 		
 		

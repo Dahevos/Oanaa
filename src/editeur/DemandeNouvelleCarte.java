@@ -3,6 +3,8 @@ package editeur;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -11,6 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 public class DemandeNouvelleCarte extends JDialog {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public JTextField XVal;
+	public JTextField YVal;
 	
 	public DemandeNouvelleCarte(JFrame parent, String title, boolean modal) {
 		
@@ -47,7 +58,7 @@ public class DemandeNouvelleCarte extends JDialog {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.insets = new Insets(0, 0, 0, 5);
-		JTextField XVal = new JTextField(4);
+		XVal = new JTextField(4);
 		add(XVal, gbc);
 
 		gbc.anchor = GridBagConstraints.LINE_END;
@@ -59,24 +70,37 @@ public class DemandeNouvelleCarte extends JDialog {
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.weightx = 1;
 		gbc.insets = new Insets(0, 0, 5, 5);
-		JTextField YVal = new JTextField(4);
+		YVal = new JTextField(4);
 		add(YVal, gbc);
 		
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridwidth = 2;
-		//gbc.weightx = 1;
 		gbc.insets = new Insets(5, 5, 0, 5);
 		JButton ok = new JButton("Créer");
 		add(ok, gbc);
 
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.anchor = GridBagConstraints.CENTER;
-		//gbc.weightx = 1;
 		gbc.insets = new Insets(5, 5, 0, 5);
 		JButton annuler = new JButton("Annuler");
 		add(annuler, gbc);
 		
 		pack();
+		
+		
+
+		annuler.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				setVisible(false);
+			}			
+		});
+
+		ok.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				setVisible(false);
+			}			
+		});
+		
 	}
 	
 	public static void main(String[] args) {
